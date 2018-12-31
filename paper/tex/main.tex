@@ -7,7 +7,9 @@
 
 \usepackage{microtype}%if unwanted, comment out or use option "draft"
 
-%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in
+%another directory
+\graphicspath{{../svg/}}
 
 \bibliographystyle{plainurl}% the recommnded bibstyle
 
@@ -53,10 +55,37 @@
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%
+%% CT
+%% Packages not included by LIPICS, but necessary for the work
+%%
+%% amsthm -- Necessary for \newtheorem
+\usepackage{amsthm}
+%% subfigure -- Necessary for \subfigure
+\usepackage{epsfig}
+
 \begin{document}
 
 \maketitle
 
+%%
+%% CT
+%% Temporary comment to mark where our modifications begin
+%% 
+
+\input{commands.tex}
+\input{model/00-model.tex}
+\input{proposed/00-proposed-method.tex}
+
+\clearpage
+
+%%
+%% CT
+%% Leaving the remaining instructions within the main document until
+%% we have incorporated all of them.
+%%
+they have been incorporated into our work.
 \begin{abstract}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent convallis orci arcu, eu mollis dolor. Aliquam eleifend suscipit lacinia. Maecenas quam mi, porta ut lacinia sed, convallis ac dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. 
  \end{abstract}

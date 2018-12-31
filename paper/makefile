@@ -15,7 +15,7 @@ all: $(TOP)
 	mv tex/main.pdf $(TOP)
 	cp $(TOP) $(TOP:.pdf=-$(VER).pdf)
 
-$(TOP): tex
+$(TOP): tex svg
 	$(MAKE) -C tex $(opt)
 
 #
