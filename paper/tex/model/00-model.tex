@@ -17,6 +17,17 @@ graph (DAG) ${G_i}$, the set of DAGs is given as ${G = \{G_1, G_2,
   \label{fig:dag}
 \end{figure}
 
+
+%%
+%% XXX-ct Proposal for streamlining the model
+%%
+In this work a node ${v_i \in V}$ is represented by a tuple
+${v_i = \langle A, c_i, m_i \rangle }$ where ${A}$ is the code segment
+the thread will execute, ${c_i}$ is the WCET function for ${m_i}$
+threads associated with each node. \revise{transition sentence
+  describing ${c_i(m_i)}$} This is compatible with the previous model
+\revise{citation needed} where ${v_i = <A, c_i(1), 1>}$. 
+
 \revise{A node $v_i^j \in V_i$ is expressed as a double <$cs_i^j$, $c_i^j$>, where $cs_i^j$ denotes the code segment executed by a thread and $c_i^j$ denotes the worst-case execution time of the thread execution.}
 Each node ${v \in V_i}$ of a DAG ${G_i = (V_i, E_i)}$ represents the
 execution of a thread and an ${e \in E_i}$ edge represents a

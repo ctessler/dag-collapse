@@ -1,5 +1,30 @@
 \section{Candidacy for collapse}
-In a DAG ${G_i = (V_i, E_i)}$, collapsing two nodes that represent the execution of the same code segment may result in a violation of the DAG. For example, Fig~\ref{fig:dag-violation} shows one such example where collapsing two nodes with the same code segment $B$ results in a loop inside the DAG. In this section, we derive the necessary and sufficient condition for a pair of nodes when satisfied does not result in a DAG violation after a collapse.
+
+\subsection{Conditions for Candidacy of Collapse}
+For nodes ${u,v \in V}$ two nodes are \emph{candidates for collapse},
+under the following conditions.
+\begin{enumerate}
+  \item ${u}$ and ${v}$ execute the same code segment.
+  \item Collapsing ${u}$ and ${v}$ does not introduce a loop
+  \item The sum of the individual worst-case execution times of ${u}$
+    and ${v}$ is greater than the collapsed worst-case execution time
+    of ${u}$ and ${v}$ i.e. ${c(u) + c(v) > c(u + v)}$.
+\end{enumerate}
+
+\revise{Following paragraph should state: One property of collapse is
+  that loops cannot be introduced for two nodes to remain candidates
+  of collapse.
+}
+In a DAG ${G_i = (V_i, E_i)}$, collapsing two nodes that represent the
+execution of the same code segment may result in a violation of the
+DAG. For example, Fig~\ref{fig:dag-violation} shows one such example
+where collapsing two nodes with the same code segment $B$ results in a
+loop inside the DAG. In this section, we derive the necessary and
+sufficient condition for a pair of nodes when satisfied does not
+result in a DAG violation after a collapse.
+
+\revise{Needed: introductory paragraph to state the following theorem
+  provides a condition for ensuring collapse does not introduce loops}
 
 \begin{figure}
   \centering
@@ -18,6 +43,20 @@ In a DAG ${G_i = (V_i, E_i)}$, collapsing two nodes that represent the execution
   \caption{Collapse of two nodes can result in a loop inside the DAG task}
   \label{fig:dag-violation}
 \end{figure}
+
+\revise{expand both definitions} \\
+\textbf{Definition ${u \prec v}$} -- indicates that ${u}$ appears
+before ${v}$ in a topological sort of ${G}$. \\
+\textbf{Definition ${d(u, v)}$} -- is the greatest number of edges
+along a directed path from ${u}$ to ${v}$ in ${G}$. When no path
+exists, ${d(u,v) = 0}$.
+
+\begin{theorem}[Candidacy for Collapse]
+  For a DAG ${G = (V, E)}$ and nodes ${u, v \in V}$ where ${u \prec
+    v}$, ${u}$ and ${v}$ can be collapsed without introducing a loop
+  if and  only if ${d(u, v) \le 1}$.
+\end{theorem}
+
 
 \begin{theorem}[Candidacy for collapse] \label{thrm:candidacy-collapse} Two nodes $v_i^j$ and $v_i^k$ in a DAG task $\tau_i$ when collapsed do not introduce a loop if and only if $d(v_i^j, v_i^k) \le 1$ and $d(v_i^k, v_i^j) \le 1$, where $d(v_i^j, v_i^k)$ is the length of the longest path between $v_i^j$ and $v_i^k$ as obtained by depth first search. \end{theorem}
 \begin{proof}
