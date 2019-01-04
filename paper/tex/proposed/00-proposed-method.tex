@@ -14,7 +14,7 @@ In a federated scheduler, a high utilization task $T_i$ is allocated $m_i$ dedic
 In Theorem~\ref{thrm:conditional-collapse}, we derive a sufficient condition to determine if collapsing two nodes is beneficial. The proof is divided into four sections. Each is related to the impact of collapse upon the longest path through the DAG of ${T_i}$.
 
 %\newtheorem{theorem}{Theorem}
-\begin{theorem}[Conditional Collapse]\label{thrm:conditional-collapse} For a DAG task ${T_i}$, collapsing two \textbf{candidate} nodes ${v_j, v_k \in V_i}$ (which refer to the same executable object) is \textbf{beneficial} if:
+\begin{theorem}[Conditional Collapse]\label{thrm:conditional-collapse} For a DAG task ${\tau_i}$, collapsing two \textbf{candidate} nodes ${v_j, v_k \in V_i}$ (which refer to the same executable object) is \textbf{beneficial} if:
 
     \begin{equation}\label{eq:cond}
         1 + \frac{\gamma_j}{\iota_j} > \frac{C_i  - L_i }{D_i - L_i}
@@ -48,32 +48,41 @@ Collapsing two nodes of DAG tasks always results in a decrease in the worst-case
   \label{fig:c1}
 \end{figure}
 
-%% \begin{figure}
-%% 	\subfigure[Before collapse]{
-%% 		\includegraphics[width=0.22\textwidth]{figs/c2before.eps}
-%% 		\label{fig:c2before}
-%% 	}
-%% 	\subfigure[After collapse]{
-%% 		\includegraphics[width=0.22\textwidth]{figs/c2after.eps}
-%% 		\label{fig:c2after}
-%% 	}
-%% 	\caption{Case 2:  Critical path length increases by $\mathbb{I}$}
-%% 	\label{fig:c2}
-%% \end{figure}
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{c2before}
+      \caption{Before Collapse}
+      \label{fig:c2before}
+    }
+  \end{subfigure}~
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{c2after}
+      \caption{After Collapse}
+      \label{fig:c2after}
+    }
+  \end{subfigure}
+  \caption{Case 2:  Critical path length increases by $\mathbb{I}$}
+  \label{fig:c2}
+\end{figure}
 
-%% \begin{figure}
-%% 	\subfigure[Before collapse]{
-%% 		\includegraphics[width=0.22\textwidth]{figs/c3before.eps}
-%% 		\label{fig:c3before}
-%% 	}
-%% 	\subfigure[After collapse]{
-%% 		\includegraphics[width=0.22\textwidth]{figs/c3after.eps}
-%% 		\label{fig:c3after}
-%% 	}
-%% 	\caption{Case 3:  Critical path length increases by a value less than $\mathbb{I}$}
-%% 	\label{fig:c3}
-%% \end{figure}
-
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{c3before}
+      \caption{Before Collapse}
+      \label{fig:c2before}
+    }
+  \end{subfigure}~
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{c3after}
+      \caption{After Collapse}
+      \label{fig:c2after}
+    }
+  \end{subfigure}
+  \caption{Case 3:  Critical path length increases by a value less than $\mathbb{I}$}
+  \label{fig:c3}
+\end{figure}
 
 In case 1, there is no change in the critical path length but the worst case execution decreases by $\mathbb{B}$,thus the required number of cores after collapse, given by $\frac{C_i - \mathbb{B} - L_i}{D_i - L_i}$, is less than the required number of cores before collapse, given by $\frac{C_i - L_i}{D_i - L_i}$  (since $\frac{C_i - \mathbb{B} - L_i}{D_i - L_i} < \frac{C_i - L_i}{D_i - L_i}$). Therefore, any two nodes that fall under case 1 can be considered for collapse. 
 
