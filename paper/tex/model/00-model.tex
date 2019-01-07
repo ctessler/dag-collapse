@@ -1,14 +1,13 @@
 \section{System Model}
 
 \subsection{Task Model}
-We consider a task set $\tau$ of ${n}$ sporadic parallel real time tasks,
-$\tau = \{\tau_1,\tau_2, ..., \tau_n\}$. A task $\tau_i$ in the task
+We consider a task set $\tasks$ of ${n}$ sporadic parallel real time tasks,
+$\tasks = \{\task{1},\task{2}, ..., \task{n}\}$, executing on $\totalcores$ processors. A task $\task{i}$ in the task
 system generates a potentially infinite number of jobs, each arriving
-no less than $T_i$ time units after the previous job and has a constrained
-deadline $D_i$ where $D_i \leq T_i$.  Each task $\tau_i \in \tau$ is
+no less than $\period{i}$ time units after the previous job and has a constrained
+deadline $\Deadline{i}$ where $\Deadline{i} \leq \period{i}$.  Each task $\task{i} \in \tasks$ is
 considered as a parallel task and is represented as a directed acyclic
-graph (DAG) ${G_i}$, the set of DAGs is given as ${G = \{G_1, G_2,
-  ..., G_n\}}$. An example DAG is shown in Fig.~\ref{fig:dag}.
+graph (DAG) ${\Dag{i}}$, the set of DAGs is given as ${\dagset = \{\Dag{1}, \Dag{2}, \cdots \Dag{n}\}}$.
 
 \begin{figure}[!h]
   \centering
@@ -17,20 +16,8 @@ graph (DAG) ${G_i}$, the set of DAGs is given as ${G = \{G_1, G_2,
   \label{fig:dag}
 \end{figure}
 
-
-%%
-%% XXX-ct Proposal for streamlining the model
-%%
-In this work a node ${v_i \in V}$ is represented by a tuple
-${v_i = \langle A, c_i, m_i \rangle }$ where ${A}$ is the code segment
-the thread will execute, ${c_i}$ is the WCET function for ${m_i}$
-threads associated with each node. \revise{transition sentence
-  describing ${c_i(m_i)}$} This is compatible with the previous model
-\revise{citation needed} where ${v_i = <A, c_i(1), 1>}$. 
-
-\revise{A node $v_i^j \in V_i$ is expressed as a double <$cs_i^j$, $c_i^j$>, where $cs_i^j$ denotes the code segment executed by a thread and $c_i^j$ denotes the worst-case execution time of the thread execution.}
-Each node ${v \in V_i}$ of a DAG ${G_i = (V_i, E_i)}$ represents the
-execution of a thread and an ${e \in E_i}$ edge represents a
+Each node ${\node{1} \in \nodeset{i}}$ of a DAG ${\Dag{i} = (\nodeset{i}, \edgeset{i})}$ represents the
+execution of a thread and an ${\edge \in \edgeset{}}$ edge represents a
 dependency between two nodes. A dependency between two nodes indicates
 that a node is ready to execute only upon the completion of all its
 predecessor nodes. We consider a source as a node with no incoming
@@ -39,46 +26,47 @@ simplicity, we assume a task has only one source and sink node. In
 practice, this not hard to achieve as a source and sink can be added
 to the task with $0$ execution and not change the task dependencies.
 
-%Nodes of a task have an associated worst-case execution time. 
-\revise{For a node $v_i^j$, we define $parent(v_i^j)$ and $child(v_i^j)$ as a set of parent nodes of $v_i^j$ and a set of child nodes of $v_i^j$, respectively. we define $pre(v_i^j)$ and $succ(v_i^j)$ as a set of all predecessors of $v_i^j$ and a set of all successors of $v_i^j$, respectively.}
-For any given task, we define a \textit{critical path} $\lambda_i$ of a 
-task $\tau_i$ as the longest execution time path that starts from
-source and ends at the sink. \textit{Critical path length} ($L_i$) is
+Nodes of a task have an associated worst-case execution time. 
+\revise{An example of the DAG task is shown in Fig.~\ref{fig:dag}. Node $\node{1}$ represents a single thread execution which requires a worst-case execution time of $20$ time units and node $\node{1}$ can be released only after node $\node{0}$ finishes execution.}
+
+\revise{For a node $\node{1} \in \nodeset{}$, we define the function $\parent{\node{1}}$ as the set of parent nodes of node $\node{1}$, i.e., node $\node{1}$ is executed only after the successful completion of all the nodes in $\parent{\node{1}}$.  The function $\child{\node{1}}$ is defined as the set of child nodes of $\node{1}j$, i.e., all nodes in the set given by $\child{\node{1}}$ cannot be released before node $\node{1}$ completes execution. We define $\pred{\node{1}}$ and $\successor{\node{1}}$ as a set of all predecessors of $\node{1}$ and a set of all successors of $\node{1}$, respectively.}
+For any given task, we define a \textit{critical path} $\criticalpath{i}$ of a 
+task $\task{i}$ as the longest execution time path that starts from
+source and ends at the sink. \textit{Critical path length} ($\criticalpathlen{i}$) is
 defined as the sum of execution times of all nodes along the critical
-path $\lambda_i$ of task $\tau_i$.  Workload $C_i$ of
-a task $\tau_i$ is defined as the sum of worst-case execution time of
+path $\criticalpath{i}$ of task $\task{i}$.  Workload $\workload{i}$ of
+a task $\task{i}$ is defined as the sum of worst-case execution time of
 all nodes in the DAG task. 
 
-
 \subsection{Federated Scheduler}
-For a task set $\tau$ , the federated scheduling algorithm works as
+For a task set $\tasks$ , the federated scheduling algorithm works as
 follows. We first divide the task sets into two disjoint sets
-$\tau_{high}$  and $\tau_{low}$. $\tau_{high}$ contains all tasks with
-high utilization (i.e. $u_i > 1$) and $\tau_{low}$ contains all
-remaining low utilization tasks. Each task in $\tau_{high}$ is
-assigned $m_i$ dedicated cores (no other task is executed on these
-cores), where: \begin{equation}\label{eq:m} m_i = \left\lceil \frac{C_i - L_i}{D_i - L_i}
+$\task{high}$  and $\task{low}$. $\task{high}$ contains all tasks with
+high utilization (i.e. $u_i > 1$) and $\task{low}$ contains all
+remaining low utilization tasks. Each task in $\task{high}$ is
+assigned $\noofcores{i}$ dedicated cores (no other task is executed on these
+cores), where: \begin{equation}\label{eq:m} \noofcores{i} = \left\lceil \frac{\workload{i} - \criticalpathlen{i}}{\Deadline{i} - \criticalpathlen{i}}
 \right\rceil \end{equation}
 
-We use $m_{high} = \sum_{\tau_i \in \tau_{high}} m_i$ to denote the total
+We use $\noofcores{high} = \sum_{\task{i} \in \task{high}} \noofcores{i}$ to denote the total
 number of cores assigned to high-utilization tasks. We assign
-the remaining cores to all low-utilization tasks $\tau_{low}$, denoted
-as ${m_{low} = m - m_{high}}$. The federated scheduling algorithm admits
-the task set ${\tau}$, if $m_{low}$ is non-negative and all tasks in
-$\tau_{low}$ are schedulable sequentially.  
+the remaining cores to all low-utilization tasks $\task{low}$, denoted
+as ${\noofcores{low} =  \totalcores - \noofcores{high}}$. The federated scheduling algorithm admits
+the task set ${\tasks}$, if $\noofcores{low}$ is non-negative and all tasks in
+$\task{low}$ are schedulable sequentially.  
 
 After a valid core allocation, runtime scheduling proceeds as
 follows. Any greedy (work-conserving) parallel scheduler can be used
-to schedule a high-utilization task $\tau_i \in \tau_{high}$ on its
-assigned $m_i$ cores. Informally, a greedy scheduler is one that never
+to schedule a high-utilization task $\task{i} \in \task{high}$ on its
+assigned $\noofcores{i}$ cores. Informally, a greedy scheduler is one that never
 keeps a core idle if some node is ready to execute. 
 
 All low-utilization tasks are treated and executed as though they are
 sequential tasks and any multiprocessor scheduling algorithm (such as
 partitioned EDF, or various rate-monotonic schedulers) can be used to
-schedule all the low-utilization tasks on the allocated $m_{low}$
+schedule all the low-utilization tasks on the allocated $\noofcores{low}$
 cores. We can safely treat low-utilization tasks as sequential tasks
-since $C_i \le D_i$ and parallel execution is not required to meet their
+since $\workload{i} \le \Deadline{i}$ and parallel execution is not required to meet their
 deadlines. 
 
 \subsection{Processing Model}
@@ -86,7 +74,7 @@ deadlines.
 In this work, for each core, we assume a dedicated direct mapped
 instruction cache. We assume a time-compositional architecture\addcite,
 where memory and execution demand are separable. Copying a block of 
-main memory to cache memory requires ${\mathbb{B}}$ cycles, commonly
+main memory to cache memory requires $\brt$ cycles, commonly
 referred to as the the block reload time (BRT). If multiple cores share
 the same processing platform their cache contents do not interfere with
 one another. The impact of a shared cache between cores is not considered.
@@ -94,27 +82,11 @@ one another. The impact of a shared cache between cores is not considered.
 
 \section{Proposed Changes to the Directed Acyclic Graph Model of Parallel Systems}
 
-For a DAG ${G = (V, E)}$ representing a parallel task, each node ${v_i \in V}$ represents
-the release, execution, and termination of a single thread within one task 
-\addcite. In the existing model, the only relationship between thread releases and the executable object they execute is the worst-case execution time of the node. Two nodes ${v_i, v_j \in V}$ may represent two threads executing the same object (possibly on different processors).
+\revise{For the rest of the paper, we work with one DAG task at a time, and hence we drop the subscript notation.}
 
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.4\textwidth}{
-      \includegraphics[width=\textwidth]{beforeCollapse}
-      \caption{Before Collapse}
-      \label{fig:before-collapse}
-    }
-  \end{subfigure} \quad
-  \begin{subfigure}[b]{0.4\textwidth}{
-      \includegraphics[width=\textwidth]{afterCollapse}
-      \caption{After Collapse}
-      \label{fig:after-collapse}
-    }
-  \end{subfigure}
-  \caption{DAG Node Change from Thread to Code Segment}
-  \label{fig:dag-change}
-\end{figure}
+For a DAG ${\Dag{} = (\nodeset{}, \edgeset{})}$ representing a parallel task, each node ${\node{1} \in \nodeset{}}$ represents
+the release, execution, and termination of a single thread within one task 
+\addcite. In the existing model, the only relationship between thread releases and the executable object they execute is the worst-case execution time of the node. Two nodes ${\node{0}, \node{1} \in \nodeset{}}$ may represent two threads executing the same object (possibly on different processors).
 
 To take advantage of instruction cache reuse, we propose a simple modification to the DAG
 model. Where possible, distinct nodes that represent the execution of
@@ -122,15 +94,37 @@ the same object are collapsed into a single node. To accommodate collapse,
 nodes are identified by their executable object, and a new attribute is added to every node
 indicating the number of threads which will be executed over the object.
 
-\revise{Given the new model to represent a node, two nodes $v_i^j$, $v_i^k$ with the same code segments (i.e., $cs_i^j = cs_i^k$ and $c_i^j = c_i^k$) are collapsed into one node $v_i^h$, where $v_i^h = <cs_i^j, c_i^j, \max{\eta_i^j, \eta_i^k}+1>$.  To ensure dependencies of the DAG are not violated, we replace the edges that start from $v_i^j$ and $v_i^k$  to start from $v_i^h$, i.e., the child nodes of $v_i^h$ are given as a union of the child nodes of $v_i^j$ and $v_i^k$, $child(v_i^h) = child(v_i^j) \cup child(v_i^k)$. Similarly, parent nodes of $v_i^h$ are given as a union of the parent nodes of $v_i^j$ and $v_i^k$, i.e., $parent(v_i^h) = parent(v_i^j) \cup parent(v_i^k)$.}
+In the established model \addcite, each node ${\node{1} \in \nodeset{}}$ is characterized
+with a single worst case execution time for a single thread. We
+propose that each node's WCET is characterized by a function
+${\newwcet{\node{1}}{\noofthreads{\node{1}}}}$ where $\noofthreads{\node{1}}$ is the number of threads that will execute the
+node ${\node{1}}$ on the same core serially (one after another) with no
+other thread executing a different object on the core in between executions.
 
-Figure~\ref{fig:dag-change} illustrates the proposed change. Nodes in
-Figure~\ref{fig:before-collapse} are labeled with the code segment
-they are associated with. Two nodes of ${B}$ are collapsed in
-Figure~\ref{fig:after-collapse}, where each node is attributed with
-the number of threads executed over the code segment.
+In this work, a node ${\node{1} \in \nodeset{}}$ is represented by a tuple ${\node{1} = \langle \cs{\node{1}}, \newwcet{\node{1}}{\noofthreads{\node{1}}}, \noofthreads{\node{1}} \rangle }$, where $\cs{\node{1}}$ is the code segment the thread will execute, \noofthreads{\node{1}} is the number of threads executing the code segment, and ${c_i}$ is the WCET function for ${m_i}$ threads. The proposed model is  compatible with the previous model \addcite where the previous model can be expressed as ${\node{1} = <\cs{\node{1}}, \newwcet{\node{1}}{1}, 1>}$. Note that, we will discuss the computation of \newwcet{\node{1}}{\noofthreads{\node{1}}} in a later section.
 
-A goal of this work is to bring the inter-thread cache benefit \addcite to parallel DAG tasks. 
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{existingDAGmodel}
+      \caption{Existing DAG model}
+      \label{fig:existingDAGmodel}
+    }
+  \end{subfigure} \quad
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{proposedDAGmodel}
+      \caption{Proposed DAG model}
+      \label{fig:proposedDAGmodel}
+    }
+  \end{subfigure}
+  \caption{Proposed changes to the DAG model}
+  \label{fig:dag-change}
+\end{figure}
+
+
+Fig.~\ref{fig:dag-change} highlights the proposed changes to the DAG task model.  Node $\node{1}$ in Fig.~\ref{fig:existingDAGmodel} represents a single thread execution which requires a worst-case execution time of $20$ time units. In the proposed model, we represent node $\node{1}$ as a tuple $\node{1} : \langle \cs{} = B, \newwcet{}{1} = 20,  \noofthreads{} = 1\rangle$, where $B$ refers to a unique code segment, $ \newwcet{}{1}$ refers to the worst-case execution time of $1$ thread which is $20$ time units, and \noofthreads{} refers to the number of threads which is 1.
+
+ A goal of this work is to bring the inter-thread cache benefit \addcite to parallel DAG tasks. 
 
 %% ct - commented out because splitting a code segment into multiple code segments may introduce loops in the DAG. 
 %%		For example, if a loop is too big and cannot fit into a cache block then we it will be split across multiple segments which will introduce a DAG.
@@ -148,35 +142,29 @@ A goal of this work is to bring the inter-thread cache benefit \addcite to paral
 %%\emph{ct-3 A figure is needed to illustrate the transformation from one over-sized node, to multiple correctly sized nodes}
 %%\\
 
-In the established model \addcite, each node ${v_i^j \in V_i}$ is characterized
-with a single worst case execution time for a single thread. We
-propose that each node's WCET is characterized by a function
-${c_i^j(\eta_i^j)}$ where ${\eta_i^j}$ is the number of threads that will execute the
-node ${v_i^j}$ on the same core serially (one after another) with no
-other thread executing a different object on the core in between executions.
+
 
 %%Given a timing-compositional architecture with the restrictions \textbf{R1} and \textbf{R2},
-Given a timing-compositional architecture
-${c_i(n)}$ can be expressed for any node in terms of the memory demand of all instructions
-of ${v_j \in V_i}$ into the cache ${\gamma_j}$ and the worst-case execution demand
-to execute the node assuming all instructions of ${v_j}$ have
-been cached ${\iota_j}$. Equation~\ref{eq:c_i} is an expression for
-${c_i(n)}$. 
- 
-\begin{equation}
-  \label{eq:c_i}
-  c_i(n) = \begin{cases}
-    0, & n \le 0 \\
-    \gamma_j + \iota_j \cdot n, & n > 0
-  \end{cases}
-\end{equation}
-
-For a node ${v_i \in V_j}$, the upper bound of memory demand of the node is denoted ${\gamma_i}$. It is the number of cycles required to load all blocks of the node. The complete set of blocks of the node are equivalent to the evicting cache blocks (ECBs)\addcite [Tan \& Mooney] of the object. Thus, the memory demand is the product of the BRT and count of ECBs of the node ${\textsc{ecb}_i}$ found in Equation~\ref{eq:mem-demand}.
-
-\begin{equation}{\label{eq:mem-demand}}
-    \gamma_i = \mathbb{B} \cdot \textsc{ecb}_i
-\end{equation}
-
-The execution demand ${\iota_i}$ for a node ${v_i^j \in V_i}$ is the worst case execution time of a single thread given all instructions are present in the cache. Any suitable WCET calculation method {\addcite} may be used to calculate the value.
+%%${c_i(n)}$ can be expressed for any node in terms of the memory demand of all instructions
+%%of ${v_j \in V_i}$ into the cache ${\gamma_j}$ and the worst-case execution demand
+%%to execute the node assuming all instructions of ${v_j}$ have
+%%been cached ${\iota_j}$. Equation~\ref{eq:c_i} is an expression for
+%%${c_i(n)}$. 
+%% 
+%%\begin{equation}
+%%  \label{eq:c_i}
+%%  c_i(n) = \begin{cases}
+%%    0, & n \le 0 \\
+%%    \gamma_j + \iota_j \cdot n, & n > 0
+%%  \end{cases}
+%%\end{equation}
+%%
+%%For a node ${v_i \in V_j}$, the upper bound of memory demand of the node is denoted ${\gamma_i}$. It is the number of cycles required to load all blocks of the node. The complete set of blocks of the node are equivalent to the evicting cache blocks (ECBs)\addcite [Tan \& Mooney] of the object. Thus, the memory demand is the product of the BRT and count of ECBs of the node ${\textsc{ecb}_i}$ found in Equation~\ref{eq:mem-demand}.
+%%
+%%\begin{equation}{\label{eq:mem-demand}}
+%%    \gamma_i = \mathbb{B} \cdot \textsc{ecb}_i
+%%\end{equation}
+%%
+%%The execution demand ${\iota_i}$ for a node ${v_i^j \in V_i}$ is the worst case execution time of a single thread given all instructions are present in the cache. Any suitable WCET calculation method {\addcite} may be used to calculate the value.
 
 %%\section{Problem Formulation}

@@ -1,3 +1,34 @@
+\section{Node Collapse}
+
+\revise{Given the new model to represent a node, two nodes $v_i^j$, $v_i^k$ with the same code segments (i.e., $cs_i^j = cs_i^k$ and $c_i^j = c_i^k$) are collapsed into one node $v_i^h$, where $v_i^h = <cs_i^j, c_i^j, \max{\eta_i^j, \eta_i^k}+1>$.  To ensure dependencies of the DAG are not violated, we replace the edges that start from $v_i^j$ and $v_i^k$  to start from $v_i^h$, i.e., the child nodes of $v_i^h$ are given as a union of the child nodes of $v_i^j$ and $v_i^k$, $child(v_i^h) = child(v_i^j) \cup child(v_i^k)$. Similarly, parent nodes of $v_i^h$ are given as a union of the parent nodes of $v_i^j$ and $v_i^k$, i.e., $parent(v_i^h) = parent(v_i^j) \cup parent(v_i^k)$.}
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{beforeCollapse}
+      \caption{Before Collapse}
+      \label{fig:before-collapse}
+    }
+  \end{subfigure} \quad
+  \begin{subfigure}[b]{0.4\textwidth}{
+      \includegraphics[width=\textwidth]{afterCollapse}
+      \caption{After Collapse}
+      \label{fig:after-collapse}
+    }
+  \end{subfigure}
+  \caption{DAG Node Change from Thread to Code Segment}
+  \label{fig:dag-collapse}
+\end{figure}
+
+
+
+Figure~\ref{fig:dag-collapse} illustrates the proposed change. Nodes in
+Figure~\ref{fig:before-collapse} are labeled with the code segment
+they are associated with. Two nodes of ${B}$ are collapsed in
+Figure~\ref{fig:after-collapse}, where each node is attributed with
+the number of threads executed over the code segment.
+
+
 \section{Candidacy for collapse}
 
 \subsection{Conditions for Candidacy of Collapse}
