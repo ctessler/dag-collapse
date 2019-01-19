@@ -1,2 +1,179 @@
 \section{Collapsing of Nodes}
 \label{sec:collapse-bound}
+
+For a task ${\task{i} \in \tasks{}}$, associated DAG
+${\Dag{i} \in \dagset{}}$, where ${\Dag{i} = (V, E)}$, with nodes
+${u,v \in V}$ that qualify as candidates for collapse, collapsing
+${u}$ and ${v}$ may (or may not) result an increase in
+performance. This section is provides a method of determining if the
+collapse of ${u}$ and ${v}$ will \emph{benefit} performance of the
+task set ${\tasks{}}$ in terms of ${m_i}$: the number of cores
+dedicated to \task{i}.
+
+For a task \task{i} with \noofcores{i} dedicated cores, collapsing
+${u}$ and ${v}$ benefits \task{i} (and therefor \tasks{}) if the
+number of cores dedicated to \task{i} is potentially reduced. If
+\noofcores{i} is the number of cores dedicated to \task{i} before
+collapsing ${u}$ and ${v}$, and ${\hat{\noofcores{i}}}$ the number of
+cores after collapse, beneficial collapse is defined as follows: 
+
+\begin{definition}[Beneficial Collapse]
+  Collapsing ${u}$ and ${v}$ is \emph{beneficial} if and only if
+  ${\hat{\noofcores{i}} \le \noofcores{i}}$.
+\end{definition}
+
+The number of cores dedicated to task \task{i} is determined by
+Equation~\ref{eq:m} which is replicated below. Equation~\ref{eq:m}
+depends on the critical path length \criticalpathlen{i} and workload
+\workload{i}, both of which can be affected by collapsing nodes.
+
+\begin{multicols}{2}
+  \begin{equation*}
+    m_i = \left\lceil
+      \frac{\workload{i} - \criticalpathlen{i}}
+           {\Deadline{i} - \criticalpathlen{i}}
+    \right\rceil
+  \end{equation*}
+  \begin{equation*}
+    \workload{i} = \sum_{v \in V} c(v)
+  \end{equation*}
+\end{multicols}
+
+For simplicity of presentation, it is assumed the entire object each
+thread assigned to ${v}$ executes fits entirely within the
+cache of each core. Additionally, each core is required to be
+timing-compositional~\addcite{}, where the memory and execution demand
+are separable. The memory demand of populating the cache with the
+entire object associated with ${v}$ is referred to as
+${\mathbb{B}_v}$. Execution of one thread over the object of ${v}$ is
+referred to as ${\mathbb{I}_v}$. The number of threads executed over
+the object of ${v}$ scheduled one core of is referred to as
+${|v|}$.
+
+Applying the principle of inter-thread cache benefit from \addcite{}
+[BUNDLE and BUNDLEP], the WCET of a node ${v}$ is given by:
+
+\begin{equation}
+  c(v) = \mathbb{B}_v + |v| \cdot \mathbb{I}_v
+\end{equation}
+
+When comparing parameters before and after collapse, the after
+collapse values will be give a ``hat'' indicator. For example, the
+critical path length before collapse is denoted
+\criticalpathlen{i}; after collapse, it is denoted
+${\hat{\criticalpathlen{i}}}$.
+
+When two nodes ${u,v \in V}$ are collapsed into ${\hat{u}}$, the WCET
+of ${\hat{u}}$ can be described in terms of the WCET of ${u}$ and
+${v}$. Under the assumption that ${u}$ and ${v}$'s object fits
+entirely in the cache, combined with the timing-compositional
+requirement of each core, scheduling ${|u|}$ followed by ${|v|}$
+threads on the same core has a memory demand of
+${\mathbb{B}_u}$. The execution demand of |u| followed by |v| threads
+is ${(|u| + |v|) \cdot \mathbb{I}_u}$ because ${\mathbb{I}_u =
+  \mathbb{I}_v}$. Thus, the WCET of ${\hat{c}(u)}$ can be defined as 
+follows:
+\begin{equation*}
+  \hat{c}(u) = c(u + v) = \mathbb{B}_u + |u + v| \cdot \mathbb{I}_u
+  \label{eq:restriction}
+\end{equation*}
+
+\begin{theorem}[Conditional Collapse] For a task
+  ${\task{i} \in \tasks{}}$, associated DAG ${\Dag{i} \in \dagset}$,
+  where ${\Dag{i} = (V, E)}$, candidate nodes ${u,v \in V}$,
+  collapsing ${u}$ and ${v}$ into ${u}$ is beneficial if:
+
+  \begin{equation}
+    \indent
+    1 + \frac{\mathbb{B}_u}{\mathbb{I}_u}
+    >
+    \frac{\workload{i} - \criticalpathlen{i}}
+         {\Deadline{i} - \criticalpathlen{i}}
+    \label{eq:condition}
+  \end{equation}
+
+  \begin{proof}
+    The goal of the proof is to show the comparison of
+    Equation~\ref{eq:collapse-condition} is true
+    under all circumstances. There are four cases which cover all
+    possible changes to the critical path length and workload of the
+    task \task{i}. Note, the deadline of the task \Deadline{i} cannot
+    be changed and does not need consideration. 
+
+    \begin{equation} \label{eq:collapse-condition}
+      \indent
+      \frac{\hat{\workload{i}} - \hat{\criticalpathlen{i}}}
+           {\Deadline{i} - \hat{\criticalpathlen{i}}} \le
+      \frac{\workload{i} - \criticalpathlen{i}}
+           {\Deadline{i} - \criticalpathlen{i}}
+    \end{equation}
+
+    In summary, the four cases to consider are:
+
+    \begin{enumerate}
+    \item ${(u, v \not \in \criticalpath{i})
+      \land
+      (\hat{u}, \hat{v} \not \in \hat{\criticalpath{i}})}$:
+      Neither node is on the critical path
+      before or after collapse.
+    \item ${(u \in \criticalpath{i} \land v \not \in \criticalpath{i})
+      \land
+      (\hat{u} \in \hat{\criticalpath{i}})}$: One node (call it ${u}$)
+      is on the critical path before collapse and remains on the path
+      after collapse.
+    \item ${(u,v \in \criticalpath{i}) \land
+      (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$: Both nodes lie
+      on the critical path before and after collapse.
+    \item ${(u,v \not \in \criticalpath{i}) \land
+      (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$: Neither node
+      belongs to the critical path before collapse. Collapsing the
+      nodes creates a \textbf{new} critical path.
+    \end{enumerate}
+
+    \begin{case}[${(u, v \not \in \criticalpath{i}) \land
+          (\hat{u}, \hat{v} \not \in \hat{\criticalpath{i}})}$] By
+      definition of critical path and critical path length, ${u}$ and
+      ${v}$ do not contribute to \criticalpathlen{i} nor to
+      ${\hat{\criticalpathlen{i}}}$. Therefor,
+      ${\criticalpathlen{i} = \hat{\criticalpathlen{i}}}$. The
+      workload has been affected by the removal of ${v}$ and ${u}$'s execution
+      and the increase in ${\hat{u}}$'s execution. 
+      \begin{align}
+        \indent
+        \hat{C}_i &= C_i - c(u) - c(v) + \hat{c}(u) \\
+        &= C_i - \mathbb{B}_u - |u| \cdot \mathbb{I}_u
+            - \mathbb{B}_v - |v| \cdot \mathbb{I}_v + \hat{c}(u)
+            \label{eq:pre-u} \\
+        &= C_i - \mathbb{B}_u - |u| \cdot \mathbb{I}_u
+            - \mathbb{B}_u - |v| \cdot \mathbb{I}_u + \hat{c}(u)
+            \label{eq:post-u} \\
+        &= C_i -2\mathbb{B}_u - |u + v|\cdot \mathbb{I}_u +
+            \hat{c}(u) \\
+        &= C_i -2\mathbb{B}_u - |u + v|\cdot \mathbb{I}_u +
+            \mathbb{B}_u + |u + v|\cdot \mathbb{I}_u \\
+        &= C_i - \mathbb{B}_u
+      \end{align}
+
+      From Equation~\ref{eq:pre-u} to Equation~\ref{eq:post-u}, the
+      subscripts on the memory and execution demand of ${v}$ are
+      transferred to ${u}$. This is permissible because ${u}$ and
+      ${v}$ refer to the same object which ${|u + v|}$ threads
+      execute.
+
+      It must be the case that ${\mathbb{B}_u \ge 0}$, therefore
+      ${\hat{C}_i \le C_i}$, the condition of
+      Equation~\ref{eq:condition} is true.
+    \end{case}
+
+    \begin{case}[${(u \in \criticalpath{i} \land v \not \in \criticalpath{i})
+      \land
+      (\hat{u} \in \hat{\criticalpath{i}})}$]
+    \end{case}
+
+    Cases 1-4 encompass all conditions under which candidates for
+    collapse may impact the number of cores assigned to \task{i}. In
+    each circumstance, condition~\ref{eq:condition} is true. Thus, for
+    candidate nodes obeying the restriction~\ref{eq:restriction} it is
+    beneficial to collapse them. 
+  \end{proof}
+\end{theorem}
