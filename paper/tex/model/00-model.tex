@@ -9,16 +9,24 @@ each arriving no less than $\period{i}$ time units after the previous
 job with deadline ${\Deadline{i}}$ constrained by the task's period
 $\Deadline{i} \leq \period{i}$. Each parallel task $\task{i} \in
 \tasks$ is represented by a DAG ${\Dag{i}}$. The set of ${n}$ DAGs is
-denoted ${\dagset = \{\Dag{1}, \Dag{2}, \ldots, \Dag{n}\}}$.
+denoted ${\dagset = \{\Dag{1}, \Dag{2}, \ldots, \Dag{n}\}}$. 
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=0.4\columnwidth]{dag}
   \caption{An Example of a Parallel Real-time Task}
   \label{fig:dag}
+  \revise{Consistent labeling: if the node has a worst case execution
+    time indexed by the node's label (ie. ${c_v = 20}$ atop a node)
+    then the node should be labeled (a ${v}$ within the circle).}
+  
+  \revise{Mathmode for labels: the WCET uses a different typeset
+${\mathrm{c_v}}$ and font. It should follow the typesetting and
+font of the rest of the paper ${c_v}$}
 \end{figure}
 
-Each node ${\node{1} \in \nodeset{i}}$ of a DAG ${\Dag{i} = (\nodeset{i}, \edgeset{i})}$ represents the
+Each node ${\node{1} \in \nodeset{i}}$ of a DAG ${\Dag{i} =
+  (\nodeset{i}, \edgeset{i})}$ represents the 
 execution of a thread and an ${\edge \in \edgeset{}}$ edge represents a
 dependency between two nodes. A dependency between two nodes indicates
 that a node is ready to execute only upon the completion of all its
