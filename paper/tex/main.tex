@@ -80,7 +80,19 @@
 
 \revise{The commands for critical path, workload, and others force strange
   spaces after their use. For example:}
-\revise{``\textbackslash{}criticalpath\{i\},'' --> ``\criticalpath{i},''}
+\revise{``\textbackslash{}criticalpath\{i\},'' -->
+  ``\criticalpath{i},''}
+
+\revise{There's something more problematic about the workload macro,
+  see the comment that immediately follows this revise statement, it
+  does not properly compile with pdflatex}
+%% Does not compile:
+%% \begin{equation*}
+%%   \begin{split}
+%%     \hat{\workload{i}} &= \workload{i}
+%%   \end{split}
+%% \end{equation*}
+
 
 \input{model/00-model.tex}
 \input{candidacy/00-candidacy.tex}
