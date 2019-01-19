@@ -64,6 +64,8 @@
 \usepackage{amsthm}
 %% subfigure -- Necessary for \subfigure
 \usepackage{epsfig}
+%% multicol -- Necessary for two equations on the same "line"
+\usepackage{multicol}
 
 \begin{document}
 
@@ -75,6 +77,11 @@
 %% 
 
 \input{commands.tex}
+
+\revise{The commands for critical path, workload, and others force strange
+  spaces after their use. For example:}
+\revise{``\textbackslash{}criticalpath\{i\},'' --> ``\criticalpath{i},''}
+
 \input{model/00-model.tex}
 \input{candidacy/00-candidacy.tex}
 \input{proposed/00-proposed-method.tex}
