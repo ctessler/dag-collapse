@@ -1,13 +1,15 @@
 \section{System Model}
 
 \subsection{Task Model}
-We consider a task set $\tasks$ of ${n}$ sporadic parallel real time tasks,
-$\tasks = \{\task{1},\task{2}, ..., \task{n}\}$, executing on $\totalcores$ processors. A task $\task{i}$ in the task
-system generates a potentially infinite number of jobs, each arriving
-no less than $\period{i}$ time units after the previous job and has a constrained
-deadline $\Deadline{i}$ where $\Deadline{i} \leq \period{i}$.  Each task $\task{i} \in \tasks$ is
-considered as a parallel task and is represented as a directed acyclic
-graph (DAG) ${\Dag{i}}$, the set of DAGs is given as ${\dagset = \{\Dag{1}, \Dag{2}, \cdots \Dag{n}\}}$.
+The directed acyclic graph (DAG) model of hard real-time
+tasks~\addcite{} defines the set of ${n}$ sporadic tasks $\tasks$ as
+$\tasks{} = \{\task{1},\task{2}, ..., \task{n}\}$. A task $\task{i}$
+in the task system generates a potentially infinite number of jobs,
+each arriving no less than $\period{i}$ time units after the previous
+job with deadline ${\Deadline{i}}$ constrained by the task's period
+$\Deadline{i} \leq \period{i}$. Each parallel task $\task{i} \in
+\tasks$ is represented by a DAG ${\Dag{i}}$. The set of ${n}$ DAGs is
+denoted ${\dagset = \{\Dag{1}, \Dag{2}, \cdots \Dag{n}\}}$.
 
 \begin{figure}[!h]
   \centering
