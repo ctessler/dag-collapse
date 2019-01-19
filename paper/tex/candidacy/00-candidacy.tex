@@ -32,11 +32,13 @@ the number of threads executed over the code segment.
 \section{Candidacy for collapse}
 
 \subsection{Conditions for Candidacy of Collapse}
-For nodes ${u,v \in V}$ two nodes are \emph{candidates for collapse},
-under the following conditions.
+For a task ${\task{i} \in \tasks{}}$, associated DAG ${\Dag{i}
+  \in \dagset{}}$, where ${\Dag{i} = (V, E)}$,
+the nodes ${u,v \in V}$ qualify as \emph{candidates} for collapse if
+and only if the following conditions are true:
 \begin{enumerate}
-  \item ${u}$ and ${v}$ execute the same code segment.
-  \item Collapsing ${u}$ and ${v}$ does not introduce a loop
+  \item Nodes ${u}$ and ${v}$ refer to execution of the same object.
+  \item Collapsing ${u}$ and ${v}$ cannot not introduce a cycle in ${G_i}$.
   \item The sum of the individual worst-case execution times of ${u}$
     and ${v}$ is greater than the collapsed worst-case execution time
     of ${u}$ and ${v}$ i.e. ${c(u) + c(v) > c(u + v)}$.
