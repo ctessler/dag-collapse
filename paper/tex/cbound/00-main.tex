@@ -85,8 +85,8 @@ follows:
 
   \begin{equation}
     \indent
-    1 + \frac{\mathbb{B}_u}{\mathbb{I}_u}
-    >
+    1 + \frac{\mathbb{B}_u}{\eta_v \cdot \mathbb{I}_u}
+    \ge
     \frac{\workload{i} - \criticalpathlen{i}}
          {\Deadline{i} - \criticalpathlen{i}}
     \label{eq:condition}
@@ -206,6 +206,21 @@ follows:
         (D_i - L_i)((C_i - L_i) - (\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u))
              &\le
              (C_i - L_i)((D_i - L_i) - \eta_v \cdot \mathbb{I}_u)) \\
+        (D_i - L_i)(C_i - L_i) -
+             (D_i - L_i)(\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u)
+             &\le
+             (C_i - L_i)(D_i - L_i) - (C_i - L_i)(\eta_v \cdot \mathbb{I}_u) \\
+        (D_i - L_i)(\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u)
+             &\ge
+             (C_i - L_i)(\eta_v \cdot \mathbb{I}_u) \\
+        \frac{\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u}
+             {\eta_v \cdot \mathbb{I}_u}
+             &\ge
+             \frac{C_i - L_i}{D_i - L_i} \\
+        1 + \frac{\mathbb{B}_u}
+             {\eta_v \cdot \mathbb{I}_u}
+             &\ge
+             \frac{C_i - L_i}{D_i - L_i}
       \end{align*}
       
       
