@@ -2,14 +2,14 @@
 
 \subsection{Task Model}
 The directed acyclic graph (DAG) model of hard real-time
-tasks~\addcite{} defines the set of ${n}$ sporadic tasks $\tasks$ as
-$\tasks{} = \{\task{1},\task{2}, ..., \task{n}\}$. A task $\task{i}$
+tasks~\addcite{} defines the set of ${n}$ sporadic tasks ${\tau}$ as
+${\tau = \{\tau_1,\tau_2, ..., \tau_n\}}$. A task ${\tau_i}$
 in the task system generates a potentially infinite number of jobs,
-each arriving no less than $\period{i}$ time units after the previous
-job with deadline ${\Deadline{i}}$ constrained by the task's period
-$\Deadline{i} \leq \period{i}$. Each parallel task $\task{i} \in
-\tasks$ is represented by a DAG ${\Dag{i}}$. The set of ${n}$ DAGs is
-denoted ${\dagset = \{\Dag{1}, \Dag{2}, \ldots, \Dag{n}\}}$. 
+each arriving no less than ${T_i}$ time units after the previous
+job with deadline ${D_i}$ constrained by the task's period
+${D_i \leq T_i}$. Each parallel task ${\tau_i \in \tau}$
+is represented by a DAG ${G_i}$. The set of ${n}$ DAGs is
+denoted ${\mathbb{G} = \{G_1, G_2, ..., G_n\}}$.
 
 \begin{figure}[!h]
   \centering
