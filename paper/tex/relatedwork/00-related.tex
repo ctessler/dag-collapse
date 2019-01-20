@@ -1,0 +1,102 @@
+\chapter{Related Work}\label{ch:related}
+
+While no existing work focuses on the inter-thread cache benefit to
+improve schedulability, this chapter provides a survey of
+related publications from the classical and positive
+perspectives. Chapter~\ref{ch:intro} gave a brief introduction to hard
+real-time systems and cache memory, the reader may find   
+Liu's~\cite{Liu:2000} and Hennessey's~\cite{Hennessey:2011} work
+helpful on the topics.
+
+\section{Cache Analysis in Multi-Threaded Programs}
+
+Multi-threaded WCET analysis typically takes the classical perspective
+on cache memory. An example is feasibility analysis for the
+fork-join~\cite{Sun:2016} model, where the WCET of a thread is the
+longest single threaded execution through the object of the
+thread. Each thread's WCET value contributes to the overall demand
+independently of other threads.
+
+Concurrent program analysis~\cite{Mittermayr:2012} of has been extended
+to consider variable configurations such as shared multi-level
+caches~\cite{Li:2009}. These methods take the negative perspective,
+where cache interactions exclusively increase execution times. For
+shared caches, the analysis includes the maximum extension due to
+cache share, by constructing the worst-case interleavings of threads.
+
+\section{Predictable Cache Behavior}
+
+Refinements of the classical perspective include techniques that
+attempt to mitigate or manage the cache impact between tasks. Their
+goal is to reduce or eliminate conflicts between jobs by creating
+predictable cache behavior. On multi-core systems, Memory-Centric
+Scheduling~\cite{Bak:2012} limits execution of tasks by considering
+its access to main and cache memory. Memory-Centric Scheduling depends
+on tasks that fit the PRedictable Execution Model
+(PREM)~\cite{Pellizzoni:2011}. 
+
+PREM-compliant tasks are divided (by the programmer) into intervals in
+one of two categories. Compatible fall into the first category,
+accessing main memory at any point during execution. Predictable
+intervals are further divided into loading and execution
+phases. During the loading phase all main memory accesses are placed
+in the lowest level cache. When the loading phase is complete, the
+execution phase may begin where no memory accesses will result in a
+cache miss.
+
+Under PREM, great care is taken to avoid concurrent memory access
+between tasks. No two loading phases may take place simultaneously. 
+Furthermore, compatible intervals are treated as loading
+phases. Isolation of tasks is by design due to the negative
+perspective of caches, as such PREM is unable to account for the
+potential inter-cache benefit between threads.
+
+\newcommand{\mcc}{MC${^2}$}
+
+PREM tasks require the programmer to define compatible and predictable
+intervals. When active participation in memory management is
+infeasible or undesirable, passive predictable cache behavior may
+involve several techniques. An example of combined management efforts
+is made in Ward's allocation framework for mixed-criticality on
+multi-core \mcc~\cite{Ward:2013}.
+
+Ward applies three techniques simultaneously. Page
+coloring (also referred to as partitioning)~\cite{Bui:2008} is used,
+where pages of memory are assigned colors in such a manner that no two
+pages can conflict in the cache. Tasks are assigned colored pages as
+their working set of memory during execution. Cache locking is
+introduced~\cite{Ward:2013}, which requires a task to hold a color
+lock for each of the colored pages it needs before execution. Cache
+scheduling considers the colors of each task when scheduling them,
+(possibly preepmtively scheduling them) to avoid conflicts with other
+tasks. Similar to PREM, the focus is on isolation to reduce the
+negative impact of cache interference between tasks without
+considering the positive impact of caches.
+
+\section{Positive Perspectives on Caches}
+
+We are aware of two techniques that take a positive perspective on
+caches. Calandrino~\cite{Calandrino:2009} limits the cache spread of
+threads (called subtasks) for multi-threaded tasks. The empirical
+results show higher cache hit rates. However, no
+analytical method to bound the cache spread is given.
+
+Persistent Cache Blocks~\cite{Rashid:2016,Rashid:2017} (PCBs) takes a
+positive perspective on caches for subsequent job releases. A PCB is a
+cache block that remains in the cache after a job has completed which
+is then reused by a subsequent job. As such, PCBs are limited to
+tasks. Additionally, the PCB approach requires modification to 
+existing worst case response time (WCRT), WCET and CRPD analytical
+methods. Over-simplistically, PCBs are removed from WCET calculations
+and included once in response time analysis. The result is a
+benefit to system schedulability.
+
+
+
+Real-time scheduling for single thread tasks models without any cache consideration was explored in~\cite{}. Worst-case execution time computation with cache benefit stemming from instruction cache reuse for sequential tasks was studied for direct mapped caches in~\cite{Arnold:1994, Mueller:1995,Mueller:2000} and set-associative caches in~\cite{Li:1996}. These works classify the instruction cache into always hit, always miss and first-miss and compute the worst-case execution time based on these classifications. Scheduler overheads for fixed priority preemptive schedulers and context switch costs were studied in~\cite{burns:1993, katcher:1993}. Cache overheads during preemptions or CRPD (cache related preemption delay) was studied from the perspective of the preempted task (or only ECB's) in~\cite{Tomiyama:2000, tan:2007}, preempting task (or only UCB's) in~\cite{Lee:1998, altmeyer:2011} and a combination of preempted and preempting task (or ECB-UCB) in~\cite{staschulat:2005}. A multi-set approach with a tighter result on cache  was proposed in~\cite{altmeyer:2012}. These results were extended to EDF schedulers~\cite{lunniss:2014a, lunniss:2013} and hierarchical scheduling in~\cite{lunniss:2016, lunniss:2014b}. These works are applicable only to a single threaded task model.
+
+Persistence cache blocks~\cite{Rashid:2016, Rashid:2017} takes a different perspective by looking into re-usable cache blocks that are present in the cache after the first job release. Cache-related preemption overhead by taking into account 
+
+
+
+

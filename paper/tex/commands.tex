@@ -10,36 +10,36 @@
 
 
 % Task Set - \tasks
-\newcommand{\tasks}{\ensuremath{\tau}}
+\newcommand{\tasks}{\ensuremath{\mathcal{T}}}
 % Individual Task - \task{n}
-\newcommand{\task}[1]{\ensuremath{\tau_{#1}}}
+\newcommand{\task}[1]{\ensuremath{\tau}}
 % Minimum inter-arrival time - \period{n}
-\newcommand{\period}[1]{\ensuremath{T_{#1}}}
+\newcommand{\period}[1]{\ensuremath{T}}
 % Relative deadline - \deadline{n}
-\newcommand{\deadline}[1]{\ensuremath{d_{#1}}}
+\newcommand{\deadline}[1]{\ensuremath{d}}
 % Absolute deadline - \Deadline{n}
-\newcommand{\Deadline}[1]{\ensuremath{D_{#1}}}
+\newcommand{\Deadline}[1]{\ensuremath{D}}
 % DAG set - \dagset
 \newcommand{\dagset}{\ensuremath{\mathbb{G}}}
 % Individual DAG
-%	\Dag{i}	->	G_i
 %	\Dag{}	->	G
-\newcommand{\Dag}[1]{\ifx &#1& \ensuremath{G} \else \ensuremath{G_{#1}} \fi}
+\newcommand{\Dag}{\ensuremath{G}}
 % set of nodes in a DAG
-%	\nodeset{i}	->	V_i
 %	\nodeset{}		->	V
-\newcommand{\nodeset}[1]{\ifx &#1& \ensuremath{V} \else \ensuremath{V_{#1}} \fi}
+\newcommand{\nodeset}{\ensuremath{V}}
 
 % set of edges in a DAG
-%	\edgeset{i}	->	E_i
 %	\edgeset{}		->	E
-\newcommand{\edgeset}[1]{\ifx &#1& \ensuremath{E} \else \ensuremath{E_{#1}} \fi}
+\newcommand{\edgeset}{\ensuremath{E}}
 % node
-%	\node{0}	->	u
-%	\node{1}	->	v
-%	\node{2}	->	w
-%	\node{3}	->	t
-\newcommand{\node}[1]{\ifx 0#1 \ensuremath{u} \fi \ifx 1#1 \ensuremath{v} \fi \ifx 2#1 \ensuremath{w} \fi \ifx 3#1 \ensuremath{t} \fi}
+%	\node0	->	u
+%	\node1	->	v
+%	\node2	->	w
+%	\node3	->	t
+\newcommand{\node0}{\ensuremath{u}}
+\newcommand{\node1}\ensuremath{v}}
+\newcommand{\node2}\ensuremath{w}}
+\newcommand{\node3}\ensuremath{t}}
 %edge - \edge
 \newcommand{\edge}{\ensuremath{e}}
 
@@ -55,28 +55,26 @@
 %critical path
 %	\criticalpath{i}	->	\lambda_i
 %	\criticalpath{}	->	\lambda 
-\newcommand{\criticalpath}[1]{\ifx &#1& \ensuremath{\lambda} \else \ensuremath{\lambda_{#1}} \fi}
+\newcommand{\criticalpath}{\ensuremath{\lambda}}
 %critical path length 
-%	\criticalpathlen{i}	->	L_i
 %	\ciriticalpathlen{}	->	L
-\newcommand{\criticalpathlen}[1]{\ifx &#1& \ensuremath{L} \else \ensuremath{L_{#1}} \fi}
+\newcommand{\criticalpathlen}{\ensuremath{L}}
 
 
 %workload of a DAG task
 % 	\workload{} -> C
-%	\workload{i} -> C_i
-\newcommand{\workload}[1]{\ifx &#1& \ensuremath{C} \else \ensuremath{C_{#1}} \fi}
+\newcommand{\workload}{\ensuremath{C}}
 % number of cores assigned to a task - \noofcores{i}
-\newcommand{\noofcores}[1]{\ensuremath{m_{#1}}}
+\newcommand{\noofcores}{\ensuremath{m}}
 % total number of cores available  - \totalcores
-\newcommand{\totalcores}{\ensuremath{m}}
+\newcommand{\totalcores}{\ensuremath{\mathbb{m}}}
 
 %WCET - \wcet{n}
-\newcommand{\wcet}[1]{\ensuremath{\ifx &#1& \ensuremath{c} \else \ensuremath{c_{#1}} \fi }}
+\newcommand{\wcet}{\ensuremath{c}}
 % WCET - \newwcet{n}{m} or \newwcet{}{m}
 %    n - task number
 %    m - number of threads
-\newcommand{\newwcet}[2]{\ensuremath{\ifx &#1& \ensuremath{c{(#2)}} \else \ensuremath{c_{#1}{(#2)}} \fi }}
+\newcommand{\newwcet}[1]{\ensuremath{c{(#1)}}}
 
 %block reload time (BRT) - \brt
 \newcommand{\brt}{\ensuremath{\mathbb{B}}}
