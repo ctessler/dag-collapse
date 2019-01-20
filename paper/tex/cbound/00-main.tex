@@ -1,41 +1,41 @@
 \section{Collapsing of Nodes}
 \label{sec:collapse-bound}
 
-For a task ${\task{i} \in \tasks{}}$, associated DAG
-${\Dag{i} \in \dagset{}}$, where ${\Dag{i} = (V, E)}$, with nodes
+For a task ${\tau_i \in \tau}$, associated DAG
+${G_i \in \mathbb{G}}$, where ${G_i = (V, E)}$, with nodes
 ${u,v \in V}$ that qualify as candidates for collapse, collapsing
 ${u}$ and ${v}$ may (or may not) result an increase in
 performance. This section is provides a method of determining if the
 collapse of ${u}$ and ${v}$ will \emph{benefit} performance of the
-task set ${\tasks{}}$ in terms of ${m_i}$: the number of cores
-dedicated to \task{i}.
+task set ${\tau}$ in terms of ${m_i}$: the number of cores
+dedicated to ${\tau_i}$.
 
-For a task \task{i} with \noofcores{i} dedicated cores, collapsing
-${u}$ and ${v}$ benefits \task{i} (and therefor \tasks{}) if the
-number of cores dedicated to \task{i} is potentially reduced. If
-\noofcores{i} is the number of cores dedicated to \task{i} before
-collapsing ${u}$ and ${v}$, and ${\hat{\noofcores{i}}}$ the number of
+For a task ${\tau_i}$ with ${m_i}$ dedicated cores, collapsing
+${u}$ and ${v}$ benefits ${\tau_i}$ (and therefor ${\tau}$) if the
+number of cores dedicated to ${\tau_i}$ is potentially reduced. If
+${m_i}$ is the number of cores dedicated to ${\tau_i}$ before
+collapsing ${u}$ and ${v}$, and ${\hat{m_i}}$ the number of
 cores after collapse, beneficial collapse is defined as follows: 
 
 \begin{definition}[Beneficial Collapse]
   Collapsing ${u}$ and ${v}$ is \emph{beneficial} if and only if
-  ${\hat{\noofcores{i}} \le \noofcores{i}}$.
+  ${\hat{m_i} \le m_i}$.
 \end{definition}
 
-The number of cores dedicated to task \task{i} is determined by
+The number of cores dedicated to task ${\tau_i}$ is determined by
 Equation~\ref{eq:m} which is replicated below. Equation~\ref{eq:m}
-depends on the critical path length \criticalpathlen{i} and workload
-\workload{i}, both of which can be affected by collapsing nodes.
+depends on the critical path length ${L_i}$ and workload
+${C_i}$, both of which can be affected by collapsing nodes.
 
 \begin{multicols}{2}
   \begin{equation*}
     m_i = \left\lceil
-      \frac{\workload{i} - \criticalpathlen{i}}
-           {\Deadline{i} - \criticalpathlen{i}}
+      \frac{C_i - L_i}
+           {D_i - L_i}
     \right\rceil
   \end{equation*}
   \begin{equation*}
-    \workload{i} = \sum_{v \in V} c_v(\eta_v)
+    C_i = \sum_{v \in V} c_v(\eta_v)
   \end{equation*}
 \end{multicols}
 
@@ -58,8 +58,7 @@ Applying the principle of inter-thread cache benefit from \addcite{}
 When comparing parameters before and after collapse, the after
 collapse values will be give a ``hat'' indicator. For example, the
 critical path length before collapse is denoted
-\criticalpathlen{i}; after collapse it is denoted
-${\hat{\criticalpathlen{i}}}$.
+${L_i}$; after collapse it is denoted ${\hat{L_i}}$.
 
 When two nodes ${u,v \in V}$ are collapsed into ${\hat{u}}$, the WCET
 of ${\hat{u}}$ can be described in terms of the WCET of ${u}$ and
@@ -79,16 +78,16 @@ follows:
 \end{equation*}
 
 \begin{theorem}[Conditional Collapse] For a task
-  ${\task{i} \in \tasks{}}$, associated DAG ${\Dag{i} \in \dagset}$,
-  where ${\Dag{i} = (V, E)}$, candidate nodes ${u,v \in V}$,
+  ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
+  where ${G_i = (V, E)}$, candidate nodes ${u,v \in V}$,
   collapsing ${u}$ and ${v}$ into ${\hat{u}}$ is beneficial if:
 
   \begin{equation}
     \indent
     1 + \frac{\mathbb{B}_u}{\eta_v \cdot \mathbb{I}_u}
     \ge
-    \frac{\workload{i} - \criticalpathlen{i}}
-         {\Deadline{i} - \criticalpathlen{i}}
+    \frac{C_i - L_i}
+         {D_i - L_i}
     \label{eq:condition}
   \end{equation}
 
@@ -97,15 +96,15 @@ follows:
     Equation~\ref{eq:collapse-condition} is true
     under all circumstances. There are four cases which cover all
     possible changes to the critical path length and workload of the
-    task \task{i}. Note, the deadline of the task \Deadline{i} cannot
+    task ${\tau_i}$. Note, the deadline of the task ${D_i}$ cannot
     be changed and does not need consideration. 
 
     \begin{equation} \label{eq:collapse-condition}
       \indent
-      \frac{\hat{\workload{i}} - \hat{\criticalpathlen{i}}}
-           {\Deadline{i} - \hat{\criticalpathlen{i}}} \le
-      \frac{\workload{i} - \criticalpathlen{i}}
-           {\Deadline{i} - \criticalpathlen{i}}
+      \frac{\hat{C_i} - \hat{L_i}}
+           {D_i - \hat{L_i}} \le
+      \frac{C_i - L_i}
+           {D_i - L_i}
     \end{equation}
 
     In summary, the four cases to consider are:
@@ -133,11 +132,10 @@ follows:
     \begin{case}[${(u, v \not \in \criticalpath{i}) \land
           (\hat{u} \not \in \hat{\criticalpath{i}})}$] By
       definition of critical path and critical path length, ${u}$ and
-      ${v}$ do not contribute to \criticalpathlen{i} nor ${\hat{u}}$ to
-      ${\hat{\criticalpathlen{i}}}$. Therefor,
-      ${\criticalpathlen{i} = \hat{\criticalpathlen{i}}}$. The
-      workload has been affected by the removal of ${v}$ and ${u}$'s execution
-      and the increase in ${\hat{u}}$'s execution. 
+      ${v}$ do not contribute to ${L_i}$ nor ${\hat{u}}$ to
+      ${\hat{L_i}}$. Therefor, ${L_i = \hat{L_i}}$. The
+      workload has been affected by the removal of ${v}$ and ${u}$'s
+      execution  and the increase in ${\hat{u}}$'s execution. 
       \begin{align}
         \indent
         \hat{C}_i &= C_i - c_u(\eta_u) - c_v(\eta_v) +
@@ -171,10 +169,9 @@ follows:
       \land (\hat{u} \in \hat{\criticalpath{i}})}$] When ${v}$ is
       collapsed into ${u}$ and ${\hat{u}}$ lies on the critical path
       ${\hat{\criticalpath{i}}}$, the length of the critical path
-      ${\hat{\criticalpathlen{i}}}$ must have been affected (since the
+      ${\hat{L_i}}$ must have been affected (since the
       execution of ${\eta_v}$ threads are now included in
-      ${\hat{\criticalpathlen{i}}}$). Thus the difference in the
-      \criticalpathlen{i} is:
+      ${\hat{L_i}}$). Thus the difference in the ${L_i}$ is:
       \begin{align*}
         \indent
         \hat{L_i} &= L_i - c_u(\eta_u) + c_u(\eta_u + \eta_v) \\
@@ -185,7 +182,7 @@ follows:
 
 
       Case 1 established the change in workload
-      ${\hat{\workload{i}}}$ as ${\mathbb{B}_u}$. The goal for this
+      ${\hat{C_i}}$ as ${\mathbb{B}_u}$. The goal for this
       case is to find a restriction under which
       Equation~\ref{eq:collapse-condition} is true given the
       differences in workload and critical path length. To do so, the
@@ -193,16 +190,16 @@ follows:
 
       \begin{align*}
         \indent
-        \frac{\hat{\workload{i}} - \hat{\criticalpathlen{i}}} 
-             {\Deadline{i} - \hat{\criticalpathlen{i}}} &\le
-        \frac{\workload{i} - \criticalpathlen{i}}
-             {\Deadline{i} - \criticalpathlen{i}} \\
-        \frac{\workload{i} - \mathbb{B}_u - (\criticalpathlen{i} + \eta_v
+        \frac{\hat{C_i} - \hat{L_i}} 
+             {D_i - \hat{L_i}} &\le
+        \frac{C_i - L_i}
+             {D_i - L_i} \\
+        \frac{C_i - \mathbb{B}_u - (L_i + \eta_v
           \cdot \mathbb{I}_u)} 
-             {\Deadline{i} - (\criticalpathlen{i} + \eta_v
+             {D_i - (L_i + \eta_v
           \cdot \mathbb{I}_u)} &\le
-        \frac{\workload{i} - \criticalpathlen{i}}
-             {\Deadline{i} - \criticalpathlen{i}} \\
+        \frac{C_i - L_i}
+             {D_i - L_i} \\
         (D_i - L_i)(C_i - \mathbb{B}_u - (L_i + \eta_v \cdot \mathbb{I}_u))
              &\le
              (C_i - L_i)(D_i - (L_i + \eta_v \cdot \mathbb{I}_u)) \\
@@ -247,20 +244,20 @@ follows:
 
       \begin{align*}
         \indent
-        \frac{\hat{\workload{i}} - \hat{\criticalpathlen{i}}} 
-             {\Deadline{i} - \hat{\criticalpathlen{i}}} &\le
-        \frac{\workload{i} - \criticalpathlen{i}} 
-             {\Deadline{i} - \criticalpathlen{i}} \\
-        \frac{\workload{i} - \mathbb{B}_u - (\criticalpathlen{i} - \mathbb{B}_u)}
-             {\Deadline{i} - (\criticalpathlen{i} - \mathbb{B}_u)}
+        \frac{\hat{C_i} - \hat{L_i}} 
+             {D_i - \hat{L_i}} &\le
+        \frac{C_i - L_i} 
+             {D_i - L_i} \\
+        \frac{C_i - \mathbb{B}_u - (L_i - \mathbb{B}_u)}
+             {D_i - (L_i - \mathbb{B}_u)}
              &\le
-        \frac{\workload{i} - \criticalpathlen{i}} 
-             {\Deadline{i} - \criticalpathlen{i}} \\
-        \frac{\workload{i} - \criticalpathlen{i}}
-             {\Deadline{i} - \criticalpathlen{i} + \mathbb{B}_u}
+        \frac{C_i - L_i} 
+             {D_i - L_i} \\
+        \frac{C_i - L_i}
+             {D_i - L_i + \mathbb{B}_u}
              &\le
-        \frac{\workload{i} - \criticalpathlen{i}} 
-             {\Deadline{i} - \criticalpathlen{i}}
+        \frac{C_i - L_i} 
+             {D_i - L_i}
       \end{align*}
 
       Since ${\mathbb{B}_u \ge 0}$, the inequality must be true.
@@ -295,7 +292,7 @@ follows:
 
     
     Cases 1-4 encompass all conditions under which candidates for
-    collapse may impact the number of cores assigned to \task{i}. In
+    collapse may impact the number of cores assigned to ${\tau_i}$. In
     each circumstance the condition of Equation
     ~\ref{eq:collapse-condition} is true. Thus, for candidate nodes
     obeying the restriction described by Equation~\ref{eq:condition}
