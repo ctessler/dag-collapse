@@ -35,7 +35,7 @@ depends on the critical path length \criticalpathlen{i} and workload
     \right\rceil
   \end{equation*}
   \begin{equation*}
-    \workload{i} = \sum_{v \in V} c(v)
+    \workload{i} = \sum_{v \in V} c_v(\eta_v)
   \end{equation*}
 \end{multicols}
 
@@ -44,38 +44,38 @@ thread assigned to ${v}$ executes fits entirely within the
 cache of each core. Additionally, each core is required to be
 timing-compositional~\addcite{}, where the memory and execution demand
 are separable. The memory demand of populating the cache with the
-entire object associated with ${v}$ is referred to as
-${\mathbb{B}_v}$. Execution of one thread over the object of ${v}$ is
-referred to as ${\mathbb{I}_v}$. The number of threads executed over
-the object of ${v}$ scheduled one core of is referred to as
-${|v|}$.
+entire object ${\alpha_v}$ associated with ${v}$ is referred to as
+${\mathbb{B}_v}$. Execution demand of one thread over ${\alpha_v}$ is
+referred to as ${\mathbb{I}_v}$. 
 
 Applying the principle of inter-thread cache benefit from \addcite{}
 [BUNDLE and BUNDLEP], the WCET of a node ${v}$ is given by:
 
 \begin{equation}
-  c(v) = \mathbb{B}_v + |v| \cdot \mathbb{I}_v
+  c_v(\eta_v) = \mathbb{B}_v + \eta_v \cdot \mathbb{I}_v
 \end{equation}
 
 When comparing parameters before and after collapse, the after
 collapse values will be give a ``hat'' indicator. For example, the
 critical path length before collapse is denoted
-\criticalpathlen{i}; after collapse, it is denoted
+\criticalpathlen{i}; after collapse it is denoted
 ${\hat{\criticalpathlen{i}}}$.
 
 When two nodes ${u,v \in V}$ are collapsed into ${\hat{u}}$, the WCET
 of ${\hat{u}}$ can be described in terms of the WCET of ${u}$ and
-${v}$. Under the assumption that ${u}$ and ${v}$'s object fits
-entirely in the cache, combined with the timing-compositional
-requirement of each core, scheduling ${|u|}$ followed by ${|v|}$
-threads on the same core has a memory demand of
-${\mathbb{B}_u}$. The execution demand of |u| followed by |v| threads
-is ${(|u| + |v|) \cdot \mathbb{I}_u}$ because ${\mathbb{I}_u =
-  \mathbb{I}_v}$. Thus, the WCET of ${\hat{c}(u)}$ can be defined as 
+${v}$. Under the assumption that ${\alpha_u}$ fits entirely in the
+cache, combined with the timing-compositional 
+requirement of each core, scheduling ${\eta_u}$ followed by ${\eta_v}$
+threads on the same core places all values in the cache before they
+are executed. Therefor, the memory demand of ${\eta_u + \eta_v}$
+threads is ${\mathbb{B}_u}$. The separable execution demand of
+${\eta_u}$ followed by ${\eta_v}$ threads is ${(\eta_u + \eta_v) \cdot
+  \mathbb{I}_u}$ because ${\mathbb{I}_u = \mathbb{I}_v}$. Thus, the
+WCET of ${\hat{c}_u(u)}$ can be defined as  
 follows:
 \begin{equation*}
-  \hat{c}(u) = c(u + v) = \mathbb{B}_u + |u + v| \cdot \mathbb{I}_u
-  \label{eq:restriction}
+  \hat{c}_u(u) = c_u(u + v) = \mathbb{B}_u + (\eta_u + \eta_v) \cdot
+      \mathbb{I}_u 
 \end{equation*}
 
 \begin{theorem}[Conditional Collapse] For a task
@@ -85,8 +85,8 @@ follows:
 
   \begin{equation}
     \indent
-    1 + \frac{\mathbb{B}_u}{\mathbb{I}_u}
-    >
+    1 + \frac{\mathbb{B}_u}{\eta_v \cdot \mathbb{I}_u}
+    \ge
     \frac{\workload{i} - \criticalpathlen{i}}
          {\Deadline{i} - \criticalpathlen{i}}
     \label{eq:condition}
@@ -140,40 +140,104 @@ follows:
       and the increase in ${\hat{u}}$'s execution. 
       \begin{align}
         \indent
-        \hat{C}_i &= C_i - c(u) - c(v) + \hat{c}(u) \\
-        &= C_i - \mathbb{B}_u - |u| \cdot \mathbb{I}_u
-            - \mathbb{B}_v - |v| \cdot \mathbb{I}_v + \hat{c}(u)
+        \hat{C}_i &= C_i - c_u(u) - c_v(v) + \hat{c}_u(u) \\
+        &= C_i - \mathbb{B}_u - \eta_u \cdot \mathbb{I}_u
+            - \mathbb{B}_v - \eta_v \cdot \mathbb{I}_v + \hat{c}_u(u)
             \label{eq:pre-u} \\
-        &= C_i - \mathbb{B}_u - |u| \cdot \mathbb{I}_u
-            - \mathbb{B}_u - |v| \cdot \mathbb{I}_u + \hat{c}(u)
+        &= C_i - \mathbb{B}_u - \eta_u \cdot \mathbb{I}_u
+            - \mathbb{B}_u - \eta_v \cdot \mathbb{I}_u + \hat{c}_u(u)
             \label{eq:post-u} \\
-        &= C_i -2\mathbb{B}_u - |u + v|\cdot \mathbb{I}_u +
-            \hat{c}(u) \\
-        &= C_i -2\mathbb{B}_u - |u + v|\cdot \mathbb{I}_u +
-            \mathbb{B}_u + |u + v|\cdot \mathbb{I}_u \\
+        &= C_i -2\mathbb{B}_u - (\eta_u + \eta_v)\cdot \mathbb{I}_u +
+            \hat{c}_u(u) \\
+        &= C_i -2\mathbb{B}_u - (\eta_u + \eta_v)\cdot \mathbb{I}_u +
+            \mathbb{B}_u + (\eta_u + \eta_v)\cdot \mathbb{I}_u \\
         &= C_i - \mathbb{B}_u
       \end{align}
 
       From Equation~\ref{eq:pre-u} to Equation~\ref{eq:post-u}, the
       subscripts on the memory and execution demand of ${v}$ are
-      transferred to ${u}$. This is permissible because ${u}$ and
-      ${v}$ refer to the same object which ${|u + v|}$ threads
-      execute.
+      substituted with ${u}$. This is permissible because ${u}$ and
+      ${v}$ refer to the same object (${\alpha_u = \alpha_v}$).
 
       It must be the case that ${\mathbb{B}_u \ge 0}$, therefore
       ${\hat{C}_i \le C_i}$, the condition of
-      Equation~\ref{eq:condition} is true.
+      Equation~\ref{eq:collapse-condition} is true.
     \end{case}
 
     \begin{case}[${(u \in \criticalpath{i} \land v \not \in \criticalpath{i})
-      \land
-      (\hat{u} \in \hat{\criticalpath{i}})}$]
+      \land (\hat{u} \in \hat{\criticalpath{i}})}$] When ${v}$ is
+      collapsed into ${u}$ and ${\hat{u}}$ lies on the critical path
+      ${\hat{\criticalpath{i}}}$, the length of the critical path
+      ${\hat{\criticalpathlen{i}}}$ must have been affected (since the
+      execution of ${\eta_v}$ threads are now included in
+      ${\hat{\criticalpathlen{i}}}$). Thus the difference in the
+      \criticalpathlen{i} is:
+      \begin{align*}
+        \indent
+        \hat{L_i} &= L_i - c_u(u) + c_u(u + v) \\
+        &= L_i - (\mathbb{B}_u + \eta_u \cdot \mathbb{I}) +
+            \mathbb{B}_u + (\eta_u + \eta_v) \cdot \mathbb{I}_u \\
+        &= L_i + \eta_v \cdot \mathbb{I}_u
+      \end{align*}
+
+
+      Case 1 established the change in workload
+      ${\hat{\workload{i}}}$ as ${\mathbb{B}_u}$. The goal for this
+      case is to find a restriction under which
+      Equation~\ref{eq:collapse-condition} is true given the
+      differences in workload and critical path length. To do so, the
+      condition is assumed to be true in order to deduce the restriction.
+
+      \begin{align*}
+        \indent
+        \frac{\hat{\workload{i}} - \hat{\criticalpathlen{i}}} 
+             {\Deadline{i} - \hat{\criticalpathlen{i}}} &\le
+        \frac{\workload{i} - \criticalpathlen{i}}
+             {\Deadline{i} - \criticalpathlen{i}} \\
+        \frac{\workload{i} - \mathbb{B}_u - (\criticalpathlen{i} + \eta_v
+          \cdot \mathbb{I}_u)} 
+             {\Deadline{i} - (\criticalpathlen{i} + \eta_v
+          \cdot \mathbb{I}_u)} &\le
+        \frac{\workload{i} - \criticalpathlen{i}}
+             {\Deadline{i} - \criticalpathlen{i}} \\
+        (D_i - L_i)(C_i - \mathbb{B}_u - (L_i + \eta_v \cdot \mathbb{I}_u))
+             &\le
+             (C_i - L_i)(D_i - (L_i + \eta_v \cdot \mathbb{I}_u)) \\
+        (D_i - L_i)((C_i - L_i) - (\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u))
+             &\le
+             (C_i - L_i)((D_i - L_i) - \eta_v \cdot \mathbb{I}_u)) \\
+        (D_i - L_i)(C_i - L_i) -
+             (D_i - L_i)(\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u)
+             &\le
+             (C_i - L_i)(D_i - L_i) - (C_i - L_i)(\eta_v \cdot \mathbb{I}_u) \\
+        (D_i - L_i)(\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u)
+             &\ge
+             (C_i - L_i)(\eta_v \cdot \mathbb{I}_u) \\
+        \frac{\mathbb{B}_u + \eta_v \cdot \mathbb{I}_u}
+             {\eta_v \cdot \mathbb{I}_u}
+             &\ge
+             \frac{C_i - L_i}{D_i - L_i} \\
+        1 + \frac{\mathbb{B}_u}
+             {\eta_v \cdot \mathbb{I}_u}
+             &\ge
+             \frac{C_i - L_i}{D_i - L_i}
+      \end{align*}
+      
+      
     \end{case}
 
+    \begin{case}[${(u,v \in \criticalpath{i}) \land
+      (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$]
+    \end{case}
+    \begin{case}[${(u,v \not \in \criticalpath{i}) \land
+          (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$]
+    \end{case}
+
+    
     Cases 1-4 encompass all conditions under which candidates for
     collapse may impact the number of cores assigned to \task{i}. In
-    each circumstance, condition~\ref{eq:condition} is true. Thus, for
-    candidate nodes obeying the restriction~\ref{eq:restriction} it is
-    beneficial to collapse them. 
+    each circumstance condition~\ref{eq:collapse-condition} is true. Thus, for
+    candidate nodes obeying the restriction described by
+    Equation~\ref{eq:condition} it is beneficial to collapse them. 
   \end{proof}
 \end{theorem}
