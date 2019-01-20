@@ -81,7 +81,7 @@ follows:
 \begin{theorem}[Conditional Collapse] For a task
   ${\task{i} \in \tasks{}}$, associated DAG ${\Dag{i} \in \dagset}$,
   where ${\Dag{i} = (V, E)}$, candidate nodes ${u,v \in V}$,
-  collapsing ${u}$ and ${v}$ into ${u}$ is beneficial if:
+  collapsing ${u}$ and ${v}$ into ${\hat{u}}$ is beneficial if:
 
   \begin{equation}
     \indent
@@ -113,42 +113,45 @@ follows:
     \begin{enumerate}
     \item ${(u, v \not \in \criticalpath{i})
       \land
-      (\hat{u}, \hat{v} \not \in \hat{\criticalpath{i}})}$:
-      Neither node is on the critical path
-      before or after collapse.
+      (\hat{u} \not \in \hat{\criticalpath{i}})}$:
+      Neither node is on the critical path before collapse and
+      ${\hat{u}}$ is not on the critical path after collapse. 
     \item ${(u \in \criticalpath{i} \land v \not \in \criticalpath{i})
       \land
       (\hat{u} \in \hat{\criticalpath{i}})}$: One node (call it ${u}$)
       is on the critical path before collapse and remains on the path
       after collapse.
     \item ${(u,v \in \criticalpath{i}) \land
-      (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$: Both nodes lie
-      on the critical path before and after collapse.
+      (\hat{u} \in \hat{\criticalpath{i}})}$: Both nodes lie
+      on the critical path before collapse.
     \item ${(u,v \not \in \criticalpath{i}) \land
-      (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$: Neither node
+      (\hat{u} \in \hat{\criticalpath{i}})}$: Neither node
       belongs to the critical path before collapse. Collapsing the
       nodes creates a \textbf{new} critical path.
     \end{enumerate}
 
     \begin{case}[${(u, v \not \in \criticalpath{i}) \land
-          (\hat{u}, \hat{v} \not \in \hat{\criticalpath{i}})}$] By
+          (\hat{u} \not \in \hat{\criticalpath{i}})}$] By
       definition of critical path and critical path length, ${u}$ and
-      ${v}$ do not contribute to \criticalpathlen{i} nor to
+      ${v}$ do not contribute to \criticalpathlen{i} nor ${\hat{u}}$ to
       ${\hat{\criticalpathlen{i}}}$. Therefor,
       ${\criticalpathlen{i} = \hat{\criticalpathlen{i}}}$. The
       workload has been affected by the removal of ${v}$ and ${u}$'s execution
       and the increase in ${\hat{u}}$'s execution. 
       \begin{align}
         \indent
-        \hat{C}_i &= C_i - c_u(u) - c_v(v) + \hat{c}_u(u) \\
+        \hat{C}_i &= C_i - c_u(\eta_u) - c_v(\eta_v) +
+        \hat{c}_u(\eta_u + \eta_v) \\
         &= C_i - \mathbb{B}_u - \eta_u \cdot \mathbb{I}_u
-            - \mathbb{B}_v - \eta_v \cdot \mathbb{I}_v + \hat{c}_u(u)
+            - \mathbb{B}_v - \eta_v \cdot \mathbb{I}_v +
+            \hat{c}_u(\eta_u + \eta_v)
             \label{eq:pre-u} \\
         &= C_i - \mathbb{B}_u - \eta_u \cdot \mathbb{I}_u
-            - \mathbb{B}_u - \eta_v \cdot \mathbb{I}_u + \hat{c}_u(u)
+            - \mathbb{B}_u - \eta_v \cdot \mathbb{I}_u +
+            \hat{c}_u(\eta_u + \eta_v)
             \label{eq:post-u} \\
         &= C_i -2\mathbb{B}_u - (\eta_u + \eta_v)\cdot \mathbb{I}_u +
-            \hat{c}_u(u) \\
+            \hat{c}_u(\eta_u + \eta_v) \\
         &= C_i -2\mathbb{B}_u - (\eta_u + \eta_v)\cdot \mathbb{I}_u +
             \mathbb{B}_u + (\eta_u + \eta_v)\cdot \mathbb{I}_u \\
         &= C_i - \mathbb{B}_u
@@ -174,7 +177,7 @@ follows:
       \criticalpathlen{i} is:
       \begin{align*}
         \indent
-        \hat{L_i} &= L_i - c_u(u) + c_u(u + v) \\
+        \hat{L_i} &= L_i - c_u(\eta_u) + c_u(\eta_u + \eta_v) \\
         &= L_i - (\mathbb{B}_u + \eta_u \cdot \mathbb{I}) +
             \mathbb{B}_u + (\eta_u + \eta_v) \cdot \mathbb{I}_u \\
         &= L_i + \eta_v \cdot \mathbb{I}_u
@@ -222,22 +225,80 @@ follows:
              &\ge
              \frac{C_i - L_i}{D_i - L_i}
       \end{align*}
-      
-      
+
+      The inequality follows directly from the condition of
+      Equation~\ref{eq:collapse-condition}.
     \end{case}
 
     \begin{case}[${(u,v \in \criticalpath{i}) \land
-      (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$]
+          (\hat{u} \in \hat{\criticalpath{i}})}$]
+      When both nodes lie on the critical path before collapse,
+      ${\hat{L}_i}$ is affected in the same manner as Case 1.
+
+      \begin{align*}
+        \indent
+        \hat{L}_i &= L_i - c_u(\eta_u) - c_v(\eta_v) + c(\eta_u +
+            \eta_v) \\
+        &= L_i - \mathbb{B}_u
+      \end{align*}
+
+      Using the workload difference from Case 1 and substituting into
+      Equation~\ref{eq:collapse-condition}:
+
+      \begin{align*}
+        \indent
+        \frac{\hat{\workload{i}} - \hat{\criticalpathlen{i}}} 
+             {\Deadline{i} - \hat{\criticalpathlen{i}}} &\le
+        \frac{\workload{i} - \criticalpathlen{i}} 
+             {\Deadline{i} - \criticalpathlen{i}} \\
+        \frac{\workload{i} - \mathbb{B}_u - (\criticalpathlen{i} - \mathbb{B}_u)}
+             {\Deadline{i} - (\criticalpathlen{i} - \mathbb{B}_u)}
+             &\le
+        \frac{\workload{i} - \criticalpathlen{i}} 
+             {\Deadline{i} - \criticalpathlen{i}} \\
+        \frac{\workload{i} - \criticalpathlen{i}}
+             {\Deadline{i} - \criticalpathlen{i} + \mathbb{B}_u}
+             &\le
+        \frac{\workload{i} - \criticalpathlen{i}} 
+             {\Deadline{i} - \criticalpathlen{i}}
+      \end{align*}
+
+      Since ${\mathbb{B}_u \ge 0}$, the inequality must be true.
     \end{case}
+
+    
     \begin{case}[${(u,v \not \in \criticalpath{i}) \land
-          (\hat{u},\hat{v} \in \hat{\criticalpath{i}})}$]
+          (\hat{u} \in \hat{\criticalpath{i}})}$]
+      When neither node participated in the critical path before
+      collapse and when collapsed create a new critical path
+      ${\criticalpath{i} \not = \hat{\criticalpath{i}}}$, ${\hat{u}}$
+      must lie on the new critical path
+      ${\hat{u} \in \hat{\criticalpath{i}}}$. Consequently, the
+      new critical path length must be greater than or equal to the
+      previous value ${\hat{L}_i \ge L_i}$. The difference in length
+      is bounded by the increase in execution:
+
+      \begin{align*}
+        \hat{L}_i - L_i &\le c_u(\eta_u + \eta_v) - c_u(\eta_u) \\
+        &\le \mathbb{B}_u + (\eta_u + \eta_v) \cdot \mathbb{I}_u
+            - (\mathbb{B}_u + \eta_u \cdot \mathbb{I}_u) \\
+        &\le \eta_v \cdot \mathbb{I}_u \\
+        \hat{L}_i & \le L_i + \eta_v \cdot \mathbb{I}_u
+      \end{align*}
+
+      Substituting the inequality of
+      ${\hat{L}_i \le L_i + \eta_v \cdot \mathbb{I}_u}$ derived here in
+      Case 4, into Case 2 reaches the same conclusion. If
+      Equation~\ref{eq:condition} is satisfied then
+      Equation~\ref{eq:collapse-condition} is true.
     \end{case}
 
     
     Cases 1-4 encompass all conditions under which candidates for
     collapse may impact the number of cores assigned to \task{i}. In
-    each circumstance condition~\ref{eq:collapse-condition} is true. Thus, for
-    candidate nodes obeying the restriction described by
-    Equation~\ref{eq:condition} it is beneficial to collapse them. 
+    each circumstance the condition of Equation
+    ~\ref{eq:collapse-condition} is true. Thus, for candidate nodes
+    obeying the restriction described by Equation~\ref{eq:condition}
+    it is beneficial to collapse them.
   \end{proof}
 \end{theorem}
