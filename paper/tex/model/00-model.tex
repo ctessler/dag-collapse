@@ -30,10 +30,7 @@ Each node ${v \in V_i}$ of a DAG ${G_i =
 execution of a thread and an edge ${e \in E_i}$ represents a
 dependency between two nodes. A dependency between two nodes indicates
 that a node is ready to execute only upon the completion of all its
-predecessor nodes. 
-A path between two nodes $u, v \in V$ is represented by $u \prec^{x} v$, where $x$ denotes the length of the path. For example, $u \prec^{3} v$ denotes that there exists a path from $u$ to $v$ of length of 3. Similarly, $u \prec^{*} v$ denotes that there exists a path from $u$ to $v$ of some arbitrary length. 
-
-The conventional model considers a source as a node with no incoming
+predecessor nodes. The conventional model considers a source as a node with no incoming
 arcs and a sink as node with no outgoing arcs. For the sake of
 simplicity, the conventional model assumes a task has only one source and sink node. In
 practice, this not hard to achieve as a source and sink can be added
@@ -43,6 +40,8 @@ Nodes of a task have an associated worst-case execution time.
 An example of the DAG task is shown in Fig.~\ref{fig:dag}. Node $v$ represents a single thread execution which requires a worst-case execution time of $20$ time units. A directed edge between node $u$and $v$ denotes node $v$ can be released for execution only after the completion of node $u$.
 
 %%\revise{For a node $v \in V_1$, we define the function $\parent{\node{1}}$ as the set of parent nodes of node $\node{1}$, i.e., node $\node{1}$ is executed only after the successful completion of all the nodes in $\parent{\node{1}}$.  The function $\child{\node{1}}$ is defined as the set of child nodes of $\node{1}j$, i.e., all nodes in the set given by $\child{\node{1}}$ cannot be released before node $\node{1}$ completes execution. We define $\pred{\node{1}}$ and $\successor{\node{1}}$ as a set of all predecessors of $\node{1}$ and a set of all successors of $\node{1}$, respectively.}
+
+A node $v \in V_i$ is said to be dependent on $u \in V_i$ , if there is a path from $u$ to $v$ of some arbitrary length in the DAG $G_i$. This dependency is expressed as \textbf{${u \prec^* v}$}, where $\prec^*$ indicates the dependency and $*$ denotes an arbitrary length. Similarly, a path between two nodes $u, v \in V$ of a DAG $G_i$ is represented by $u \prec^{x} v$, where $x$ denotes the length of the path. For example, $u \prec^{3} v$ denotes that there exists a path from $u$ to $v$ of length of 3.
 For any given task, the work in~\cite{li2014analysis} defines \textit{critical path} $\lambda_i$ of a 
 task $\tau_i$ as the longest execution time path that starts from
 source and ends at the sink. \textit{Critical path length} ($\L_i$) is
@@ -81,6 +80,17 @@ schedule all the low-utilization tasks on the allocated $m_{low}$
 cores. The federated scheduler treats all low-utilization tasks as sequential tasks
 since $C_{i} \le D_{i}$ and parallel execution is not required to meet their
 deadlines. 
+
+\subsection{Processing Model}
+
+In this work, for each core, we assume a dedicated direct mapped
+instruction cache. We assume a time-compositional architecture\addcite,
+where memory and execution demand are separable. Copying a block of 
+main memory to cache memory requires $\brt$ cycles, commonly
+referred to as the the block reload time (BRT). If multiple cores share
+the same processing platform their cache contents do not interfere with
+one another. The impact of a shared cache between cores is not considered.
+
 
 \subsection{Proposed Changes to the Conventional Task Model}
 Here, we discuss the proposed changes to the task model and processing model used in this paper.
@@ -126,17 +136,6 @@ In this work, a node ${v \in V}$ is represented by a tuple ${v = \langle \alpha_
 Fig.~\ref{fig:dag-change} highlights the proposed changes to the DAG task model.  Node $v$ in Fig.~\ref{fig:existingDAGmodel} represents a single thread execution which requires a worst-case execution time of $20$ time units. In the proposed model, we represent node $v$ as a tuple $v : \langle \alpha_v = B, c_v(\eta_v) = 20,  \eta_v = 1\rangle$, where $B$ refers to a unique code segment, $ c_v(\eta_v)$ refers to the worst-case execution time of $1$ thread which is $20$ time units, and $\eta_v$ refers to the number of threads which is 1.
 
  A goal of this work is to bring the inter-thread cache benefit \addcite to parallel DAG tasks. 
-
-\subsection{Processing Model}
-
-In this work, for each core, we assume a dedicated direct mapped
-instruction cache. We assume a time-compositional architecture\addcite,
-where memory and execution demand are separable. Copying a block of 
-main memory to cache memory requires $\brt$ cycles, commonly
-referred to as the the block reload time (BRT). If multiple cores share
-the same processing platform their cache contents do not interfere with
-one another. The impact of a shared cache between cores is not considered.
-
 
 %% ct - commented out because splitting a code segment into multiple code segments may introduce loops in the DAG. 
 %%		For example, if a loop is too big and cannot fit into a cache block then we it will be split across multiple segments which will introduce a DAG.
