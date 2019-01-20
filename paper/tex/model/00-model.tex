@@ -31,8 +31,7 @@ execution of a thread and an edge ${e \in E_i}$ represents a
 dependency between two nodes. A dependency between two nodes indicates
 that a node is ready to execute only upon the completion of all its
 predecessor nodes. 
-\revise{Dependency between two nodes $u$, $v$ is represented by $u \prec^{*} v$, where $\prec^{*}$ represents the precedence with an arbitrary length, i.e., $u$ precedes $v$ in the DAG by an arbitrary length. Similarly,  $u \prec^{3} v$ denotes that $u$ precedes $v$ by a length of 3.}
-
+A path between two nodes $u, v \in V$ is represented by $u \prec^{x} v$, where $x$ denotes the length of the path. For example, $u \prec^{3} v$ denotes that there exists a path from $u$ to $v$ of length of 3. Similarly, $u \prec^{*} v$ denotes that there exists a path from $u$ to $v$ of some arbitrary length. 
 
 The conventional model considers a source as a node with no incoming
 arcs and a sink as node with no outgoing arcs. For the sake of
