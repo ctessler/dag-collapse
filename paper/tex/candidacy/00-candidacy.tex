@@ -43,16 +43,16 @@ the number of threads executed over the code segment.
 \section{Candidacy for collapse}
 
 \subsection{Conditions for Candidacy of Collapse}
-For a task ${\task{i} \in \tasks{}}$, associated DAG ${\Dag{i}
-  \in \dagset{}}$, where ${\Dag{i} = (V, E)}$,
-the nodes ${u,v \in V}$ qualify as \emph{candidates} for collapse if
-and only if the following conditions are true:
+For a task ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
+where ${G_i = (V, E)}$, the nodes ${u,v \in V}$ qualify as
+\emph{candidates} for collapse if and only if the following conditions
+are true: 
 \begin{enumerate}
   \item Nodes ${u}$ and ${v}$ refer to execution of the same object.
   \item Collapsing ${u}$ and ${v}$ cannot not introduce a cycle in ${G_i}$.
   \item The sum of the individual worst-case execution times of ${u}$
     and ${v}$ is greater than the collapsed worst-case execution time
-    of ${u}$ and ${v}$ i.e. ${c(u) + c(v) > c(u + v)}$.
+    of ${u}$ and ${v}$ i.e. ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$.
 \end{enumerate}
 
 \revise{Following paragraph should state: One property of collapse is
