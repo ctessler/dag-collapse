@@ -1,19 +1,24 @@
 \section{Node Collapse}
-In a parallel DAG task, one approach to introduce inter-thread cache benefit is to execute nodes with the same code segment/executable object on the same core. This approach allows the second node to re-use cache blocks loaded into the cache by the first node. In this paper, we focus on this approach of obtaining inter-thread cache benefit, i.e., executing nodes with same code segment on the same core. 
+In a parallel DAG task, one approach to introduce inter-thread cache benefit is to execute nodes with the same code segment/executable object on the same core. This approach allows the second node to re-use cache blocks loaded into the cache by the first node, and save on the time required to load potentially re-usable block of instructions into the cache. In this paper, we focus on this approach of obtaining inter-thread cache benefit, i.e., executing nodes with same code segment on the same core.  
 
-To enable execution of two nodes on the same core, we introduce the concept of collapse of nodes in a DAG. Two nodes $u,v$ of the DAG $G_i$ that have the same code segment can be collapsed into one node $\hat{u}$. We refer to $\hat{u}$ as the collapsed node. Such a collapse also results in a new DAG representation $\hat{G_i} = (\hat{V_i}, \hat{E_i})$ of the same task $\tau_i$.  We refer to the new DAG representation $\hat{G_I}$ as the collapsed DAG. The exact changes to the 
-
- The collapsed node $\hat{u}$ is represented as a tuple $\hat{u} = \langle \alpha_u , c_u(\eta_{\hat{u}}), \eta_{\hat{u}} \rangle$. The collapsed node will represent the execution
-  
- \begin{definition}{Collapse}
-Two nodes $u,v \in V_i$ of a DAG $G_i$ are collapsed into one node $\hat{u} \in \hat{V_i}$ to generate a collapsed DAG $\hat{G_i}$, which represents the same task $\tau_i$. The collapsed node $\hat{u}$ is expressed as $\hat{u} = \langle \alpha_u , c_u(\eta_w), \eta_{\hat{u}} = \eta_u+\eta_v \rangle$. The collapsed DAG $\hat{G_i} = (\hat{V_i}, \hat{E_i})$ adheres to the following properties
+To enable execution of two nodes on the same core, we introduce the concept of collapse in a DAG. Two nodes $u, v$ of the DAG $G_i$ that have the same code segment can be collapsed into one node $\hat{u} \in \hat{G_i}$. The collapsed node, $\hat{u}$, represents the execution of threads from both $u$ and $v$ and maintains parent and child dependencies of both $u$ and $v$. Assuming that, for two nodes $x, v \in V_i$, $x \prec^{1} v$ denotes that $x$ is the parent of node $v$ in the DAG $G_i$, then we formally define the collapse of a node as follows:
+ \begin{definition}{\texbf Collapse}
+When two nodes $u,v \in V_i$ of a DAG $G_i$ are collapsed into $\hat{u} \in \hat{V_i}$, the collapsed node $\hat{u}$ must adhere to the following properties:
 \begin{itemize}
-\item $\exists x \prec^{1} \hat{u}$ in $\hat{G_i}$ $\forall x \prec^1 v$ in $G_i$; i.e., all parent node dependencies of $v$ are preserved in the collapsed DAG.
-\item $\exists \hat{u} \prec^{1} y$ in $\hat{G_i}$ $\forall v \prec^1 y$ in $G_i$; i.e., all child node dependencies of $v$ are preserved in the collapsed DAG.
+\item The collapsed node $\hat{u}$ is represents the thread executions of node $u$ and node $v$ and is expressed as $\hat{u} = \langle \alpha_u , c_u(\eta_{\hat{u}}), \eta_{\hat{u}} = \eta_u+\eta_v \rangle$.
+\item All parent dependencies of $v$ are maintained by $\hat{u}$, i.e., $ x \prec^{1} \hat{u} \text{in} \hat{G_i} \, \forall x \prec^1 v \text{in} G_i$.
+\item All child dependencies of $v$ are maintained by $\hat{u}$, i.e., $\hat{u} \prec^{1} y \text{in} \hat{G_i} \, \forall v \prec^1 y \text{in} G_i$.
+\item All parent dependencies of $u$ are maintained by $\hat{u}$, i.e., $ x \prec^{1} \hat{u} \text{in} \hat{G_i} \, \forall x \prec^1 u \text{in} G_i$.
+\item All child dependencies of $u$ are maintained by $\hat{u}$, i.e., $\hat{u} \prec^{1} y \text{in} \hat{G_i} \, \forall u \prec^1 y \text{in} G_i$.
 \end{itemize}
  \end{definition}
 
-The collapsed node $\hat{u}$ represents the execution of $\eta_{\hat{u}}$ threads on the code segment of $u$, where $\eta_{\hat{u}} = \eta_u+\eta_v$. The worst case execution time of the collapsed node $\hat{u}$ can be obtained as function of the $\eta_{\hat{u}}$. The collapsed node $\hat{u}$ can be represented as a tuple $\hat{u} = \langle \alpha_u , c_u(\eta_{\hat{u}}), \eta_{\hat{u}} \rangle$. To maintain the parent and child dependencies of the original DAG $G_i$, we replace all edges $(x , v) , (v, y) \forall x, y$ with edges $(x, u), (u, y)$. Note that, collapsing $u$ into $v$ is the same as collapsing $v$ into $u$. For the sake of simplicity in understanding, we collapse node that is not on the critical path into the node on the critical path. For example, if $u$ is on the critical path and has the same code segment as node $v$, then we collapse $v$ into $u$, i.e., the collapsed node is given as $\hat{u} =  \langle \alpha_u , c_u(\eta_{\hat{u}}), \eta_{\hat{u}} \rangle$.
+During execution, the greedy scheduler treats the collapsed node as a single node executing multiple threads. Thus, collapsing two nodes ensures they execute on the same core and save on the time required to load some instruction blocks into the cache. 
+
+Collapsing two nodes $u, v$ into $\hat{u}$ is the same as collapsing them into $\hat{v}$ since the collapsed node $\hat{u}$ or $\hat{v}$ includes dependencies of both $u$ and $v$. For the sake of simplicity in explanation, if one node $u \in V_i$ is on the critical path of $G_i$, then we collapse node $v$ into $u$ and refer to the collapsed nodes as $\hat{u}$.
+
+
+
 
 
 \begin{figure}
@@ -35,8 +40,7 @@ The collapsed node $\hat{u}$ represents the execution of $\eta_{\hat{u}}$ thread
 \end{figure}
 
 Fig.~\ref{fig:dag-collapse} illustrates the collapse of two nodes. Nodes in
-Fig.~\ref{fig:before-collapse} are labeled with their node ID and show the tuple representation of the code segment, worst case execution time and number of threads executing the node. Nodes $w$ and $x$ are executing one thread each over the same code segment $A_2$ with worst case execution time 20 units. These two nodes can be collapsed into a single node $t$ with two threads of execution over code segment $A_2$. Assuming that $A_2$ can fit into the cache and the ratio of memory demand to execution demand is$10:1$, the worst case execution time of $t$ can be computed to be $22$, as shown in
-Fig.~\ref{fig:after-collapse}.
+Fig.~\ref{fig:before-collapse} are labeled with their node ID and show the tuple representation of the code segment, worst-case execution time and the number of threads executing the node. In Fig.~\ref{fig:before-collapse}, nodes $w$ and $x$ execute one thread each over the same code segment $A_2$ with worst-case execution time 20 time units. These two nodes can be collapsed into a single node $\hat{w}$ with two threads of execution over code segment $A_2$,  as shown in Fig.~\ref{fig:after-collapse}. Assuming that $A_2$ can fit into the cache and the ratio of memory demand to execution demand is $10:1$, the worst-case execution time of $\hat{w}$ only includes the memory demand of thread and execution demand of two threads, i.e., $24$ time units.
 
 %% \revise{A property of collapse must be stated. When collapsing two
 %%   nodes ${u,v \in V}$ to one node ${u}$ the length of the critical
