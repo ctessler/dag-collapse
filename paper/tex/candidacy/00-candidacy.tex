@@ -48,8 +48,8 @@ Fig.~\ref{fig:after-collapse}.
 
 
 \section{Candidacy for collapse}
+As discussed in the previous section, collapsing two nodes in the DAG can result in an inter-thread cache benefit. However, in some cases, collapsing two nodes may not result in any inter-thread cache benefit. In this sections, we define candidates for collapse as a pair of nodes which when collapsed have the potential only to introduce inter-thread cache benefit. 
 
-\subsection{Conditions for Candidacy of Collapse}
 For a task ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
 where ${G_i = (V, E)}$, the nodes ${u,v \in V}$ qualify as
 \emph{candidates} for collapse if and only if the following conditions
@@ -62,20 +62,9 @@ are true:
     of ${u}$ and ${v}$ i.e. ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$.
 \end{enumerate}
 
-\revise{Following paragraph should state: One property of collapse is
-  that loops cannot be introduced for two nodes to remain candidates
-  of collapse.
-}
-In a DAG ${G_i = (V_i, E_i)}$, collapsing two nodes that represent the
-execution of the same code segment may result in a violation of the
-DAG. For example, Fig~\ref{fig:dag-violation} shows one such example
-where collapsing two nodes with the same code segment $B$ results in a
-loop inside the DAG. In this section, we derive the necessary and
-sufficient condition for a pair of nodes when satisfied does not
-result in a DAG violation after a collapse.
+One straightforward property of candidacy is that the nodes $u$ and $v$ should represent the execution over the same code segment.  If the code-segments are different, it can introduce more delays due to context switches between the two threads and cache block evictions. 
 
-\revise{Needed: introductory paragraph to state the following theorem
-  provides a condition for ensuring collapse does not introduce loops}
+Another property of candidacy is that execution of two thread on the same core should be less sequential execution of both the blocks, i.e., ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$. 
 
 \begin{figure}
   \centering
@@ -94,6 +83,13 @@ result in a DAG violation after a collapse.
   \caption{Collapse of two nodes can result in a loop inside the DAG task}
   \label{fig:dag-violation}
 \end{figure}
+
+
+Finally, the third property of candidacy is that when two nodes are collapsed, it should not introduce any loops in the DAG. For example, Fig~\ref{fig:dag-violation} shows one such example where collapsing two nodes with the same code segment $B$ results in a loop inside the DAG. If the collapse of two nodes introduces a loop, then the scheduler cannot break out of the loop and will execute the nodes in the loop forever. Here, we derive the necessary and sufficient condition for a pair of nodes to not introduce a loop when collapsed.
+
+\revise{Needed: introductory paragraph to state the following theorem
+  provides a condition for ensuring collapse does not introduce loops}
+
 
 
 \textbf{Definition ${d(u, v)}$} -- is the greatest number of edges
