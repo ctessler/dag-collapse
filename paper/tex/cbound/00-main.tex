@@ -110,27 +110,27 @@ follows:
     In summary, the four cases to consider are:
 
     \begin{enumerate}
-    \item ${(u, v \not \in \criticalpath{i})
+    \item ${(u, v \not \in \lambda_i)
       \land
-      (\hat{u} \not \in \hat{\criticalpath{i}})}$:
+      (\hat{u} \not \in \hat{\lambda_i})}$:
       Neither node is on the critical path before collapse and
       ${\hat{u}}$ is not on the critical path after collapse. 
-    \item ${(u \in \criticalpath{i} \land v \not \in \criticalpath{i})
+    \item ${(u \in \lambda_i \land v \not \in \lambda_i)
       \land
-      (\hat{u} \in \hat{\criticalpath{i}})}$: One node (call it ${u}$)
+      (\hat{u} \in \hat{\lambda_i})}$: One node (call it ${u}$)
       is on the critical path before collapse and remains on the path
       after collapse.
-    \item ${(u,v \in \criticalpath{i}) \land
-      (\hat{u} \in \hat{\criticalpath{i}})}$: Both nodes lie
+    \item ${(u,v \in \lambda_i) \land
+      (\hat{u} \in \hat{\lambda_i})}$: Both nodes lie
       on the critical path before collapse.
-    \item ${(u,v \not \in \criticalpath{i}) \land
-      (\hat{u} \in \hat{\criticalpath{i}})}$: Neither node
+    \item ${(u,v \not \in \lambda_i) \land
+      (\hat{u} \in \hat{\lambda_i})}$: Neither node
       belongs to the critical path before collapse. Collapsing the
       nodes creates a \textbf{new} critical path.
     \end{enumerate}
 
-    \begin{case}[${(u, v \not \in \criticalpath{i}) \land
-          (\hat{u} \not \in \hat{\criticalpath{i}})}$] By
+    \begin{case}[${(u, v \not \in \lambda_i) \land
+          (\hat{u} \not \in \hat{\lambda_i})}$] By
       definition of critical path and critical path length, ${u}$ and
       ${v}$ do not contribute to ${L_i}$ nor ${\hat{u}}$ to
       ${\hat{L_i}}$. Therefor, ${L_i = \hat{L_i}}$. The
@@ -165,10 +165,10 @@ follows:
       Equation~\ref{eq:collapse-condition} is true.
     \end{case}
 
-    \begin{case}[${(u \in \criticalpath{i} \land v \not \in \criticalpath{i})
-      \land (\hat{u} \in \hat{\criticalpath{i}})}$] When ${v}$ is
+    \begin{case}[${(u \in \lambda_i \land v \not \in \lambda_i)
+      \land (\hat{u} \in \hat{\lambda_i})}$] When ${v}$ is
       collapsed into ${u}$ and ${\hat{u}}$ lies on the critical path
-      ${\hat{\criticalpath{i}}}$, the length of the critical path
+      ${\hat{\lambda_i}}$, the length of the critical path
       ${\hat{L_i}}$ must have been affected (since the
       execution of ${\eta_v}$ threads are now included in
       ${\hat{L_i}}$). Thus the difference in the ${L_i}$ is:
@@ -227,8 +227,8 @@ follows:
       Equation~\ref{eq:collapse-condition}.
     \end{case}
 
-    \begin{case}[${(u,v \in \criticalpath{i}) \land
-          (\hat{u} \in \hat{\criticalpath{i}})}$]
+    \begin{case}[${(u,v \in \lambda_i) \land
+          (\hat{u} \in \hat{\lambda_i})}$]
       When both nodes lie on the critical path before collapse,
       ${\hat{L}_i}$ is affected in the same manner as Case 1.
 
@@ -264,13 +264,13 @@ follows:
     \end{case}
 
     
-    \begin{case}[${(u,v \not \in \criticalpath{i}) \land
-          (\hat{u} \in \hat{\criticalpath{i}})}$]
+    \begin{case}[${(u,v \not \in \lambda_i) \land
+          (\hat{u} \in \hat{\lambda_i})}$]
       When neither node participated in the critical path before
       collapse and when collapsed create a new critical path
-      ${\criticalpath{i} \not = \hat{\criticalpath{i}}}$, ${\hat{u}}$
+      ${\lambda_i \not = \hat{\lambda_i}}$, ${\hat{u}}$
       must lie on the new critical path
-      ${\hat{u} \in \hat{\criticalpath{i}}}$. Consequently, the
+      ${\hat{u} \in \hat{\lambda_i}}$. Consequently, the
       new critical path length must be greater than or equal to the
       previous value ${\hat{L}_i \ge L_i}$. The difference in length
       is bounded by the increase in execution:
