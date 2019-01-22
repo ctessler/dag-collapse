@@ -1,21 +1,21 @@
 \section{Node Collapse}
-In a parallel DAG task, one approach to introduce inter-thread cache benefit is to execute nodes with the same code segment/executable object on the same core. This approach allows the second node to re-use cache blocks loaded into the cache by the first node, and save on the time required to load potentially re-usable block of instructions into the cache. In this paper, we focus on this approach of obtaining inter-thread cache benefit, i.e., executing nodes with same code segment on the same core.  
+In a parallel DAG task, one approach to introduce inter-thread cache benefit is to execute nodes with the same code segment/executable object on the same core. This approach allows the second node to re-use cache blocks loaded into the cache by the first node, and reduce the total time required to load instructions into the cache (or memory demand). To obtain inter-thread cache benefit, this paper focusses on the approach of executing nodes with same code segment on the same core. 
 
-To enable execution of two nodes on the same core, we introduce the concept of collapse in a DAG. Two nodes $u, v$ of the DAG $G_i$ that have the same code segment can be collapsed into one node $\hat{u} \in \hat{G_i}$. The collapsed node, $\hat{u}$, represents the execution of threads from both $u$ and $v$ and maintains parent and child dependencies of both $u$ and $v$. Assuming that, for two nodes $x, v \in V_i$, $x \prec^{1} v$ denotes that $x$ is the parent of node $v$ in the DAG $G_i$, then we formally define the collapse of a node as follows:
- \begin{definition}{\texbf Collapse}
+This section introduces the collapse of two nodes in a DAG to enable execution of two nodes on the same core. Two nodes $u, v$ of the DAG $G_i$ that have the same code segment can be collapsed into one node $\hat{u} \in \hat{G_i}$. The collapsed node, $\hat{u}$, represents the execution of threads from $u$ and $v$ and maintains parent and child dependencies of $u$ and $v$. Assuming that, for two nodes $x, v \in V_i$, $x \prec^{1} v$ denotes that $x$ is the parent of node $v$ in the DAG $G_i$, then collapse of two nodes is defined as follows:
+ \begin{definition}[\textbf{Collapse}]
 When two nodes $u,v \in V_i$ of a DAG $G_i$ are collapsed into $\hat{u} \in \hat{V_i}$, the collapsed node $\hat{u}$ must adhere to the following properties:
 \begin{itemize}
 \item The collapsed node $\hat{u}$ is represents the thread executions of node $u$ and node $v$ and is expressed as $\hat{u} = \langle \alpha_u , c_u(\eta_{\hat{u}}), \eta_{\hat{u}} = \eta_u+\eta_v \rangle$.
-\item All parent dependencies of $v$ are maintained by $\hat{u}$, i.e., $ x \prec^{1} \hat{u} \text{in} \hat{G_i} \, \forall x \prec^1 v \text{in} G_i$.
-\item All child dependencies of $v$ are maintained by $\hat{u}$, i.e., $\hat{u} \prec^{1} y \text{in} \hat{G_i} \, \forall v \prec^1 y \text{in} G_i$.
-\item All parent dependencies of $u$ are maintained by $\hat{u}$, i.e., $ x \prec^{1} \hat{u} \text{in} \hat{G_i} \, \forall x \prec^1 u \text{in} G_i$.
-\item All child dependencies of $u$ are maintained by $\hat{u}$, i.e., $\hat{u} \prec^{1} y \text{in} \hat{G_i} \, \forall u \prec^1 y \text{in} G_i$.
+\item All parent dependencies of $v$ are maintained by $\hat{u}$, i.e., $ x \prec^{1} \hat{u} \text{ in } \hat{G_i} \, \forall x \prec^1 v \text{ in } G_i$.
+\item All child dependencies of $v$ are maintained by $\hat{u}$, i.e., $\hat{u} \prec^{1} y \text{ in } \hat{G_i} \, \forall v \prec^1 y \text{ in } G_i$.
+\item All parent dependencies of $u$ are maintained by $\hat{u}$, i.e., $ x \prec^{1} \hat{u} \text{ in } \hat{G_i} \, \forall x \prec^1 u \text{ in } G_i$.
+\item All child dependencies of $u$ are maintained by $\hat{u}$, i.e., $\hat{u} \prec^{1} y \text{ in } \hat{G_i} \, \forall u \prec^1 y \text{ in } G_i$.
 \end{itemize}
  \end{definition}
 
-During execution, the greedy scheduler treats the collapsed node as a single node executing multiple threads. Thus, collapsing two nodes ensures they execute on the same core and save on the time required to load some instruction blocks into the cache. 
+During the execution of task $\tau_i$, the greedy scheduler that schedules each node on the dedicated $m_i$ cores treats the collapsed node as a single node executing multiple threads. Thus, collapsing two nodes ensures that they execute on the same core and reduce the memory demand. 
 
-Collapsing two nodes $u, v$ into $\hat{u}$ is the same as collapsing them into $\hat{v}$ since the collapsed node $\hat{u}$ or $\hat{v}$ includes dependencies of both $u$ and $v$. For the sake of simplicity in explanation, if one node $u \in V_i$ is on the critical path of $G_i$, then we collapse node $v$ into $u$ and refer to the collapsed nodes as $\hat{u}$.
+Collapsing two nodes $u, v$ into $\hat{u}$ is the same as collapsing them into $\hat{v}$ since the collapsed node $\hat{u}$ or $\hat{v}$ includes dependencies of both $u$ and $v$. For the sake of simplicity in explanation, if one node $u \in V_i$ is on the critical path of $G_i$, then $v$ is collapsed into $u$ and is referred as $\hat{u}$.
 
 
 
@@ -40,36 +40,35 @@ Collapsing two nodes $u, v$ into $\hat{u}$ is the same as collapsing them into $
 \end{figure}
 
 Fig.~\ref{fig:dag-collapse} illustrates the collapse of two nodes. Nodes in
-Fig.~\ref{fig:before-collapse} are labeled with their node ID and show the tuple representation of the code segment, worst-case execution time and the number of threads executing the node. In Fig.~\ref{fig:before-collapse}, nodes $w$ and $x$ execute one thread each over the same code segment $A_2$ with worst-case execution time 20 time units. These two nodes can be collapsed into a single node $\hat{w}$ with two threads of execution over code segment $A_2$,  as shown in Fig.~\ref{fig:after-collapse}. Assuming that $A_2$ can fit into the cache and the ratio of memory demand to execution demand is $10:1$, the worst-case execution time of $\hat{w}$ only includes the memory demand of thread and execution demand of two threads, i.e., $24$ time units.
+Fig.~\ref{fig:before-collapse} are labeled with their node ID and show the tuple representation, i.e., code segment, worst-case execution time and the number of threads executing the node. In Fig.~\ref{fig:before-collapse}, nodes $w$ and $x$ execute one thread each over the same code segment $A_2$ with worst-case execution time of 20 time units. These two nodes can be collapsed into a single node $\hat{w}$ with two threads of execution over code segment $A_2$,  as shown in Fig.~\ref{fig:after-collapse}. Assuming that $A_2$ can fit into the cache and the ratio of memory demand to execution demand is $10:1$, the worst-case execution time of $\hat{w}$ only includes the memory demand of one thread and execution demand of two threads, i.e., $24$ time units.
 
 %% \revise{A property of collapse must be stated. When collapsing two
 %%   nodes ${u,v \in V}$ to one node ${u}$ the length of the critical
 %%   path is reduced by the WCET of ${v}$ before collapse and increased
-%%   by the WCET of ${u}$ after collapse}
-  
+%%   by the WCET of ${u}$ after collapse}  
 
 
 
 
 
 \section{Candidacy for collapse}
-As discussed in the previous section, collapsing two nodes in the DAG can result in an inter-thread cache benefit. However, in some cases, collapsing two nodes may not result in any inter-thread cache benefit. In this section, we define candidates for collapse as a pair of nodes which when collapsed have the potential only to introduce inter-thread cache benefit. 
-
-For a task ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
+Although the previous section mentions that a collapse of nodes can reduce the memory demand of a node,  in some cases, the collapse of two nodes can render the task not schedulable. In this paper, a pair of nodes are said to be candidates for collapse if they can potentially reduce the memory demand of the nodes. This section presents the conditions for a pair of nodes to be called a candidate. For a task ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
 where ${G_i = (V, E)}$, the nodes ${u,v \in V}$ qualify as
 \emph{candidates} for collapse if and only if the following conditions
 are true: 
 \begin{enumerate}
   \item Nodes ${u}$ and ${v}$ refer to execution of the same object.
-  \item Collapsing ${u}$ and ${v}$ cannot not introduce a cycle in ${G_i}$.
-  \item The sum of the individual worst-case execution times of ${u}$
+  \item Collapsing ${u}$ and ${v}$ cannot not introduce a cycle in the collapsed DAG $\hat{G_i}$.
+  %% I believe this condition is covered in the cbound. We can discuss this on saturday.
+  \item \revise{The sum of the individual worst-case execution times of ${u}$
     and ${v}$ is greater than the collapsed worst-case execution time
-    of ${u}$ and ${v}$ i.e. ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$.
+    of ${u}$ and ${v}$ i.e. ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$.}
 \end{enumerate}
 
-One straightforward property of candidacy is that the nodes $u$ and $v$ should represent the execution over the same code segment.  If the code-segments are different, it can introduce more delays due to context switches between the two threads and cache block evictions. 
+The first property of candidacy is that the candidate nodes $u$ and $v$ should represent the execution over the same code segment. The collapse of two nodes with different code segments can introduce context switch delays and cache evictions, which does not provide any inter-thread cache benefit. On the contrary, it can increase the worst-case execution time. 
 
-Another property of candidacy is that execution of two thread on the same core should be less sequential execution of both the blocks, i.e., ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$. 
+
+%%Another property of candidacy is that execution of two thread on the same core should be less sequential execution of both the blocks, i.e., ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$. 
 
 \begin{figure}
   \centering
@@ -90,36 +89,37 @@ Another property of candidacy is that execution of two thread on the same core s
 \end{figure}
 
 
-Finally, the third property of candidacy is that when two nodes are collapsed, it should not introduce any loops in the DAG. For example, Fig~\ref{fig:dag-violation} shows one such example where collapsing two nodes with the same code segment $B$ results in a loop inside the DAG. If the collapse of two nodes introduces a loop, then the scheduler cannot break out of the loop and will execute the nodes in the loop forever. Here, we derive the necessary and sufficient condition for a pair of nodes to not introduce a loop when collapsed.
+The second property of candidacy is that the collapse of two nodes should not introduce any loops in the collapsed DAG.  If a loop exists in the collapsed DAG, the first node in the cycle $\hat{u}$ is a predecessor of itself, i.e., $\hat{u} \prec^{*} \hat{u}$. This implies that the first node does not meet its dependency and is never released. Thus, the task is no longer schedulable. For example, in Fig.~\ref{fig:dag-violation}, node $\hat{v}$ is never release as it is waiting for $w$, and $w$ is never release as it is waiting for node $\hat{v}$. Considering \textbf{${d(u, v)}$} defines the greatest number of edges along a directed path from $u$ to $v$ (and ${d(u,v) = 0}$ when no path exists), the necessary and sufficient condition for a pair of nodes to not introduce a loop when collapsed is as follows:
 
-\revise{Needed: introductory paragraph to state the following theorem
-  provides a condition for ensuring collapse does not introduce loops}
+%% removed after revised text
+%%\textbf{Definition ${d(u, v)}$} -- is the greatest number of edges
+%%along a directed path from ${u}$ to ${v}$ in ${G}$. When no path
+%%exists, ${d(u,v) = 0}$.
 
-
-
-\textbf{Definition ${d(u, v)}$} -- is the greatest number of edges
-along a directed path from ${u}$ to ${v}$ in ${G}$. When no path
-exists, ${d(u,v) = 0}$.
-
-\begin{theorem}[Candidacy for Collapse]
-  For a DAG ${G = (V, E)}$ and nodes ${u, v \in V}$ where ${u \prec
+\begin{theorem}[\textbf{Collapse does not introduce a loop}]
+  For a DAG ${G = (V, E)}$ and nodes ${u, v \in V}$ where ${u \prec^{*}
     v}$, ${u}$ and ${v}$ can be collapsed without introducing a loop
   if and  only if ${d(u, v) \le 1}$.
 \end{theorem}
-
-
-\begin{theorem}[Candidacy for collapse] \label{thrm:candidacy-collapse} Two nodes $v_i^j$ and $v_i^k$ in a DAG task $\tau_i$ when collapsed do not introduce a loop if and only if $d(v_i^j, v_i^k) \le 1$ and $d(v_i^k, v_i^j) \le 1$, where $d(v_i^j, v_i^k)$ is the length of the longest path between $v_i^j$ and $v_i^k$ as obtained by depth first search. \end{theorem}
 \begin{proof}
-%The proof is divided into two parts
-We divide the proof into two parts. We first prove that the condition $d(v_i^j, v_i^k) \le 1$ and $d(v_i^k, v_i^j) \le 1$ is a necessary condition for candidacy and latter we prove that the condition is a sufficient condition.
+This proof is divided into two parts. The first part proves the necessary condition, i.e., if the constraint is violated, then the collapse of two nodes will introduce a loop. The second part proves the sufficient condition, i.e., a loop is introduced in a DAG after collapse only if the constraint is violated. 
 
-%First part - necessary part - to prove that if the constraint is violated then it will result a violation of the dag 
-If the condition is not satisfied $d(v_i^j, v_i^k) \le 1$ and $d(v_i^k, v_i^j) \le 1$, then it implies that there is a path from $v_i^j$ to $v_i^k$ or a path from $v_i^k$ and $v_i^j$ with length greater than 1, i.e., $\exists p1 \  such \  that p1 = {v_i^j, v_i^l, \cdots , v_i^k} or p1 = {v_i^k, v_i^l, \cdots , v_i^l}$. When nodes $v_i^j$ and $v_i^k$ are collapsed into $v_i^h$, $p1$ will be modified to ${v_i^h, v_i^l, \cdots , v_i^h}$ which forms a loop. 
+For the first part, $d(u, v) > 1$ implies that there exists a node $t$ such that $t$ is a predecessor of $v$ ($t \prec^{*} v$) and $u$ is a predecessor of $t$ ($u \prec^{*} t$). When nodes $u$ and $v$ are collapsed into $\hat{v}$, by the definition of collapse, $t$ is predecessor of $\hat{v}$ and $\hat{v}$ is a predecessor of $t$. Thus, the violation of the constraint introduces a loop. 
 
-%Second part -  sufficient part - if the constraint is met there is no other source of a loop
-To prove the sufficient condition, we first prove the contra-positive to be true, i.e., a DAG violation occurs only when the condition $d(v_i^j, v_i^k) \le 1$ and $d(v_i^k, v_i^j) \le 1$ is true. A DAG violation in the collapsed DAG implies that there exists a path $p1$ in the collapsed DAG given by $v_i^h, v_i^l, \cdots , v_i^h$ with a length greater than or equal to 2.  Since there are no loops in the original DAG, only a collapsed node can cause a loop in the collapsed DAG. Therefore, $v_i^h$ should be the collapsed node. In the original DAG, one node of $v_i^h$ corresponds to $v_i^j$ and the other node corresponds to $v_i^k$. In the original DAG, $p1$ must correspond to ${v_i^j, v_i^l, \cdots , v_i^k} or {v_i^k, v_i^l, \cdots , v_i^l}$. Thus, a DAG violation in the collapsed DAG implies that there exists a path from $v_i^j$ to $v_i^k$  or $v_i^k$ and $v_i^j$ with a length greater than or equal to 2. 
+For the second part, a DAG violation in the collapsed DAG $\hat{G_i}$ implies that there exists a path from $w$ to $w$ with length greater than $1$, i.e., $w \prec{x} w$ and $x > 1$.  Since there are no loops in the original DAG $G_i$, only a collapsed node $\hat{u}$ can cause a loop in the collapsed DAG, i.e. $w = \hat{u}$. This implies that, if there exists a node $t \in \hat{G_i}$ such that $t \prec^{*} w$ and $w \prec^{*} t$ then in the original DAG $G_i$ these dependencies correspond to $t \prec^{*} v$ and $u \prec^{*} t$. If there exists a $t$ such that $u \prec^{*} t \prec^{*}$, then the length of path from $u$ to $v$ is at least $2$. Thus, a loop is introduced in the collapsed DAG violation only when $d(u, v) > 1$. 
 
-Therefore, we can conclude that two nodes $v_i^j$ and $v_i^k$ in a DAG task $\tau_i$ when collapsed do not introduce a loop if and only if $d(v_i^j, v_i^k) \le 1$ and $d(v_i^k, v_i^j) \le 1$.
+Therefore, we can conclude that two nodes $u$ and $v$ in a DAG task $\tau_i$ when collapsed do not introduce a loop if and only if $d(u, v) \le 1$.
 \end{proof}
 
-In summary, we define two nodes $v_i^j$ and $v_i^k$ to be {\textbf candidates for collapse} if they have the same code block and $d(v_i^j, v_i^k) \le 1$ and $d(v_i^k, v_i^j) \le 1$, where $d(v_i^j, v_i^k)$ is the length of the longest path between $v_i^j$ and $v_i^k$.
+In summary, we define the candidates for collapse as follows:
+\begin{definition}[\textbf{Candidates for Collapse}]
+Two nodes $u, v \in V_i$, where ${u \prec^{*} v}$, are defined as {\textbf candidates for collapse} if they conform to the following properties:
+\begin{itemize}
+ \item Nodes ${u}$ and ${v}$ refer to execution of the same object.
+  \item $d(u, v) \le 1$
+  %% I believe this condition is covered in the cbound. We can discuss this on saturday.
+  \item \revise{The sum of the individual worst-case execution times of ${u}$
+    and ${v}$ is greater than the collapsed worst-case execution time
+    of ${u}$ and ${v}$ i.e. ${c(\eta_u) + c(\eta_v) > c(\eta_u + \eta_v)}$.}
+\end{itemize}
+\end{definition}
