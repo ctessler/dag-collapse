@@ -26,17 +26,16 @@ font of the rest of the paper ${c_v}$}
 
 Each node ${v \in V_i}$ of a DAG ${G_i =
   (V_i, E_i)}$ represents the 
-execution of a thread and an edge ${e \in E_i}$ represents a
+execution of a thread of one job on one core. Each node of a task has an associated worst-case execution time.  An edge ${e \in E_i}$ represents a
 dependency between two nodes. A dependency between two nodes indicates
 that a node is ready to execute only upon the completion of all its
 predecessor nodes. For the sake of simplicity, DAG model assumes that there is one source node and one sink node, where source has no incoming edges and sink has no outgoing edges.
 
-Nodes of a task have an associated worst-case execution time. 
-An example of the DAG task is shown in Fig.~\ref{fig:dag}. Node $v$ represents a single thread execution which requires a worst-case execution time of $20$ time units. A directed edge between node $u$and $v$ denotes node $v$ can be released for execution only after the completion of node $u$.
+
+An example of the DAG task is shown in Fig.~\ref{fig:dag}. In Fig.~\ref{fig:dag}, node $v$ represents the execution of a single thread which requires a worst-case execution time of $20$ time units.  In Fig.~\ref{fig:dag}, a directed edge between node $u$and $v$ denotes node $v$ can be released for execution only after the completion of node $u$.
 
 %%\revise{For a node $v \in V_1$, we define the function $\parent{\node{1}}$ as the set of parent nodes of node $\node{1}$, i.e., node $\node{1}$ is executed only after the successful completion of all the nodes in $\parent{\node{1}}$.  The function $\child{\node{1}}$ is defined as the set of child nodes of $\node{1}j$, i.e., all nodes in the set given by $\child{\node{1}}$ cannot be released before node $\node{1}$ completes execution. We define $\pred{\node{1}}$ and $\successor{\node{1}}$ as a set of all predecessors of $\node{1}$ and a set of all successors of $\node{1}$, respectively.}
 
-A node $v \in V_i$ is said to be dependent on $u \in V_i$ , if there is a path from $u$ to $v$ of some arbitrary length in the DAG $G_i$. This dependency is expressed as \textbf{${u \prec^* v}$}, where $\prec^*$ indicates the dependency and $*$ denotes an arbitrary length. Similarly, a path between two nodes $u, v \in V$ of a DAG $G_i$ is represented by $u \prec^{x} v$, where $x$ denotes the length of the path. For example, $u \prec^{3} v$ denotes that there exists a path from $u$ to $v$ of length of 3.
 For any given task, the work in~\cite{li2014analysis} defines \textit{critical path} $\lambda_i$ of a 
 task $\tau_i$ as the longest execution time path that starts from
 source and ends at the sink. \textit{Critical path length} ($L_i$) is
@@ -107,6 +106,9 @@ node ${v}$ on the same core serially (one after another) with no
 other thread executing a different object on the core in between executions.
 
 In this work, a node ${v \in V_i}$ is represented by a tuple ${v = \langle \alpha_{v}, c_{v}(\eta_{v}), \eta_{v} \rangle }$, where $\alpha_{v}$ is the code segment the thread executes, $\eta_{v}$ is the number of threads, and ${c_{v}}$ is the WCET function for ${\eta_v}$ threads. The proposed model is  compatible with the previous model \cite{li2014analysis} where the previous model can be expressed as ${v = <\alpha_{v}, c_{v}(\eta_v), \eta_v=1>}$. Note that, we will discuss the computation of $c_{v}(\eta_{v})$ in a later section.
+
+A node $v \in V_i$ is said to be dependent on $u \in V_i$ , if there is a path from $u$ to $v$ of some arbitrary length in the DAG $G_i$. This dependency is expressed as \textbf{${u \prec^* v}$}, where $\prec^*$ indicates the dependency and $*$ denotes an arbitrary length. Similarly, a path between two nodes $u, v \in V$ of a DAG $G_i$ is represented by $u \prec^{x} v$, where $x$ denotes the length of the path. For example, $u \prec^{3} v$ denotes that there exists a path from $u$ to $v$ of length of 3.
+
 
 \begin{figure}
   \centering
