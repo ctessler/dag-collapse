@@ -1,16 +1,43 @@
+\clearpage
 \section{System Model}
 
 \subsection{Directed Acyclic Graph Model}
-%\subsection{Task Model}
+
 The directed acyclic graph (DAG) model of hard real-time
-tasks~\cite{li2014analysis} defines the set of ${n}$ sporadic tasks ${\tau}$ as
-${\tau = \{\tau_1,\tau_2, ..., \tau_n\}}$. A task ${\tau_i}$
-in the task system generates a potentially infinite number of jobs,
-each arriving no less than ${T_i}$ time units after the previous
-job with deadline ${D_i}$ constrained by the task's period
-${D_i \leq T_i}$. Each parallel task ${\tau_i \in \tau}$
-is represented by a DAG ${G_i}$. The set of ${n}$ DAGs is
-denoted ${\mathbb{G} = \{G_1, G_2, ..., G_n\}}$.
+tasks~\cite{li2014analysis} defines the set of ${n}$ sporadic tasks
+${\tau}$ as ${\tau = \{\tau_1,\tau_2, ..., \tau_n\}}$. A task
+${\tau_i \in \tau}$ generates a potentially infinite number
+of jobs, each arriving no less than ${T_i}$ time units after the
+previous job with deadline ${D_i}$ constrained by the task's period
+${D_i \leq T_i}$. Each parallel task ${\tau_i \in \tau}$ is
+represented by a DAG ${G_i}$. The set of ${n}$ DAGs is denoted
+${\mathbb{G} = \{G_1, G_2, ..., G_n\}}$.
+
+Each node ${v \in V_i}$ of the DAG ${G_i = (V_i, E_i)}$ represents the 
+execution of a thread. A thread executes on exactly one of the ${m}$
+identical cores of the target architecture or distributed
+system. Associated with each node ${v}$ is a worst-case execution time 
+(WCET) ${c_v}$; an upper bound on the time required for the thread to
+complete execution without interruption on one core.
+
+An edge ${e = (u,v)}$ in ${E_i}$ indicates an execution dependency
+between ${u,v \in V_i}$. For ${v}$ to begin execution on any of the
+${m}$ cores, all immediate predecessors ${\{u|(u,v) \in E_i\}}$ must
+have completed execution.
+
+A DAG ${G_i}$ is required to have a source and sink node,
+${s,t \in V_i}$ respectively. The source has no incoming edges,
+${\not \exists u~|~(u,s) \in E_i}$. The sink has no outgoing edges,
+${\not \exists v~|~(t,v) \in E_i}$. When a job is released, execution
+begins with one thread of ${s}$ on one of the ${m}$ cores. The job
+terminates when the one thread of ${t}$ completes on one of the ${m}$
+cores. During the execution of a job, up to ${m}$ cores may execute
+any of the ${v \in V}$ threads in parallel.
+
+An example DAG task is shown in Figure~\ref{fig:dag}. The node
+${v}$ represents the execution of a single thread with a WCET
+${c_v = 20}$ time units. The directed edge ${(u,v)}$ restricts ${v}$
+from executing on any core until ${u}$ has completed.
 
 \begin{figure}[!h]
   \centering
@@ -18,31 +45,30 @@ denoted ${\mathbb{G} = \{G_1, G_2, ..., G_n\}}$.
   \caption{An Example of a Parallel Real-time Task}
   \label{fig:dag}
 \end{figure}
-  
-  \revise{Mathmode for labels: the WCET uses a different typeset
-${\mathrm{c_v}}$ and font. It should follow the typesetting and
-font of the rest of the paper ${c_v}$}
 
+For a DAG ${G_i = (V_i, E_i)}$, the \emph{critical path} ${\lambda_i}$
+is the path from the source ${s}$ to sink ${t}$ with the greatest sum
+of WCETs for nodes along the path among all paths from ${s}$ to
+${t}$. The \emph{critical path length} ${L_i}$ is the sum of WCET
+values for all nodes ${v}$ on the critical path ${v \in \lambda_i}$.
+The \emph{workload} of ${G_i}$ is the sum of all WCET values
+${v \in V_i}$.
 
-Each node ${v \in V_i}$ of a DAG ${G_i =
-  (V_i, E_i)}$ represents the 
-execution of a thread of one job on one core. Each node of a task has an associated worst-case execution time.  An edge ${e \in E_i}$ represents a
-dependency between two nodes. A dependency between two nodes indicates
-that a node is ready to execute only upon the completion of all its
-predecessor nodes. For the sake of simplicity, DAG model assumes that there is one source node and one sink node, where source has no incoming edges and sink has no outgoing edges.
+\begin{definition}[Critical Path Length of ${G_i}$]
+  \begin{equation}
+    L_i = \sum_{v \in \lambda_i} c_v
+  \end{equation}
+\end{definition}
 
+\begin{definition}[Workload of ${G_i}$]
+  \begin{equation}
+    C_i = \sum_{v \in V_i} c_v
+  \end{equation}
+\end{definition}
 
-An example of the DAG task is shown in Fig.~\ref{fig:dag}. In Fig.~\ref{fig:dag}, node $v$ represents the execution of a single thread which requires a worst-case execution time of $20$ time units.  In Fig.~\ref{fig:dag}, a directed edge between node $u$and $v$ denotes node $v$ can be released for execution only after the completion of node $u$.
-
-%%\revise{For a node $v \in V_1$, we define the function $\parent{\node{1}}$ as the set of parent nodes of node $\node{1}$, i.e., node $\node{1}$ is executed only after the successful completion of all the nodes in $\parent{\node{1}}$.  The function $\child{\node{1}}$ is defined as the set of child nodes of $\node{1}j$, i.e., all nodes in the set given by $\child{\node{1}}$ cannot be released before node $\node{1}$ completes execution. We define $\pred{\node{1}}$ and $\successor{\node{1}}$ as a set of all predecessors of $\node{1}$ and a set of all successors of $\node{1}$, respectively.}
-
-For any given task, the work in~\cite{li2014analysis} defines \textit{critical path} $\lambda_i$ of a 
-task $\tau_i$ as the longest execution time path that starts from
-source and ends at the sink. \textit{Critical path length} ($L_i$) is
-defined as the sum of execution times of all nodes along the critical
-path $\lambda_i$ of task $\tau_{i}$.  Workload $C_{i}$ of
-a task $\tau_{i}$ is defined as the sum of worst-case execution time of
-all nodes in the DAG task. 
+In Figure~\ref{fig:dag}, the critical path is
+${\lambda = \langle u, v, t \rangle}$. The DAG has a critical path
+length of ${L = 60}$ and a workload ${C = 70}$.
 
 \subsection{Federated Scheduler}
 For a task set $\tau$ , the federated scheduling algorithm proposed in~\cite{li2014analysis} works as
