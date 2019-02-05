@@ -1,0 +1,28 @@
+\section{Low Utilization Tasks}
+
+In the federating scheduling setting of this work, collapsing nodes of
+high utilization tasks may reduce the number of cores dedicated to
+those individual tasks. The reduction is achieved by accounting for
+the inter-thread cache benefit between threads of the task and
+scheduling in a cache cognizant manner. Bringing the inter-thread
+cache benefit to low utilization tasks is outside the scope of this
+work, and is left for consideration in later work.
+
+Low utilization tasks are serialized, their DAGs are converted to a
+graph where nodes have in and out-degree of at most one. Each low
+utilization task is converted to a single block of execution,
+scheduled alongside the other low utilization tasks. Preemptions
+between low utilization tasks are permitted by the selected scheduling
+algorithm algorithm such as earliest deadline first (EDF). The
+collapsing process described herein does not apply when preemptions
+are permitted during the execution of a node. Nor is the proposed
+model compatible with known cache-aware limited preemption techniques
+such as \addcite{} [Bertogna].
+
+To account for the impact of caches upon low utilization tasks, two
+analyses are required. First, the WCET of each serialized task must
+include a cache analysis \addcite{} [Arnold, Mueller, Something more
+  modern]. Second, due to the possibility of preemptions cache related
+preemption delay analysis \addcite{} [Altmeyer, etc.] must be
+performed for the task set under the given scheduling algorithm
+\addcite{} [Luniss].
