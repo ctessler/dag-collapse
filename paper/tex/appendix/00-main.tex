@@ -1,0 +1,47 @@
+\appendix
+
+\section{Strictly Increasing Discrete Concave WCET Functions}
+
+\revise{This section must be re-written, since it is taken verbatim
+  from the other paper that C.T. is working on.}
+
+For tasks that benefit from \texttt{BUNDLE}-based scheduling and
+analysis, ${c_i(m)}$ is a strictly increasing discrete concave
+function. Tasks that do not are made vacuously concave by restricting
+jobs to release one thread, and discussed further in
+Section~\ref{sec:bundle-growth}. 
+
+A consequence of ${c_i(m)}$'s strictly increasing discrete
+concavity is a limit on the increase of the WCET as the number of
+threads increases. This property is referred to as the
+\emph{non-increasing growth} of ${c_i(m)}$ and is leveraged in
+Sections~\ref{sec:schedulability} and \ref{sec:eval}.
+
+\begin{definition}[Concavity Restriction on WCET Growth]
+  \label{prop:ni-growth}
+  For a strictly increasing discrete
+  concave WCET function ${c_i(m)}$:
+  \label{prop:wcet-growth}
+  \begin{equation}
+    \label{eq:wcet-growth}
+    \indent
+    \forall m \in \mathbb{N}^+~|~c_i(m) - c_i(m - 1) \ge c_i(m + 1) - c_i(m)
+  \end{equation}
+  It then follows for ${m_x \ge m_y > 0}$
+  \begin{align*}
+    \indent
+    c_i(m_x + 1) - c_i(m_x) &\le c_i(m_x) - c_i(m_x - 1) \\
+    &\le c_i(m_x - 1) - c_i(m_x - 2) \\
+    &... \\
+    &\le c_i(m_y) - c_i(m_y + 1) \\
+    &\le c(m_y) - c(m_y - 1)
+  \end{align*}
+\end{definition}
+
+
+A WCET function ${c_i(m)}$ that obeys Property~\ref{prop:wcet-growth},
+will produce a value for ${c_i(m+1)}$ threads which is greater than
+${c_i(m)}$. The difference between ${c_i(m+1)}$ and ${c_i(m)}$ must be less
+than or equal to the difference of ${c_i(m)}$ and ${c_i(m-1)}$. As the
+number of threads increase, ${c(m)}$ increases at a decreasing (or
+stable) rate. 
