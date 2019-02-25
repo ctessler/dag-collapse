@@ -1,12 +1,14 @@
 \section{Collapsing of Nodes}
+\newcommand{\tex}[1]{cbound/#1}
+
 \label{sec:collapse-bound}
 
 For a task ${\tau_i \in \tau}$, associated DAG
 ${G_i \in \mathbb{G}}$, where ${G_i = (V, E)}$, with nodes
 ${u,v \in V}$ that qualify as candidates for collapse, collapsing
 ${u}$ and ${v}$ may (or may not) result an increase in
-performance. This section is provides a method of determining if the
-collapse of ${u}$ and ${v}$ will \emph{benefit} performance of the
+performance. This section provides a method of determining if the
+collapse of ${u}$ and ${v}$ will \emph{benefit} the performance of the 
 task set ${\tau}$ in terms of ${m_i}$: the number of cores
 dedicated to ${\tau_i}$.
 
@@ -77,8 +79,8 @@ follows:
       \mathbb{I}_u 
 \end{equation*}
 
-\begin{theorem}[Conditional Collapse] For a task
-  ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
+\begin{theorem}[Conditional Collapse] \label{thm:collapse}
+  For a task ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
   where ${G_i = (V, E)}$, candidate nodes ${u,v \in V}$,
   collapsing ${u}$ and ${v}$ into ${\hat{u}}$ is beneficial if:
 
@@ -230,7 +232,8 @@ follows:
     \begin{case}[${(u,v \in \lambda_i) \land
           (\hat{u} \in \hat{\lambda_i})}$]
       When both nodes lie on the critical path before collapse,
-      ${\hat{L}_i}$ is affected in the same manner as Case 1.
+      ${\hat{L}_i}$ is affected in the same manner as ${\hat{C}_i}$ in
+      Case 1. 
 
       \begin{align*}
         \indent
@@ -299,3 +302,5 @@ follows:
     it is beneficial to collapse them.
   \end{proof}
 \end{theorem}
+
+\input{\tex{10-relaxing.tex}}

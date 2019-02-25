@@ -1,0 +1,155 @@
+\subsection{Relaxed Object Sizes}
+
+In Theorem~\ref{thm:collapse}, all nodes ${v \in V}$ are restricted to
+objects that fit entirely within the cache. This allows for the theorem
+to use a simple closed form of the WCET for each node
+${c_v(\eta_v)}$. The ultimate goal of the restriction is to provide the
+simplest description within the theorem. This subsection will relax
+the size restriction, allowing objects to exceed the size of the
+cache. An alternative collapse condition will be presented in this
+relaxed setting.
+
+Under the relaxed setting, nodes retain their WCET as functions of the
+number of threads. For a node ${v}$ the WCET of ${\eta_v}$ threads is
+given by ${c_v(\eta_v)}$. This work assumes a suitable method for
+calculating ${c_v(\eta_v)}$ such as \bundle{} or \bundlep{}
+\addcite. Such methods may require more sophisticated scheduling
+mechanisms for each node, rather than the strictly serialized approach 
+used in the restricted setting.
+
+Theorem~\ref{thm:relaxed-collapse}, is an abbreviation of
+Theorm~\ref{thm:collapse}; stating the new condition and covering the
+individual cases without revisiting the full structure of the
+proof. It relies on the concept of the ``delta'' of execution bounds
+determined by the WCET functions. 
+
+\begin{definition}[WCET Bound Delta]
+  For nodes ${u, v \in V}$ with the same executable object ${\alpha_u
+    = \alpha_v}$, ${\Delta}$ is the difference in the separate
+  execution times of ${\eta_u}$ and ${\eta_v}$ compared to the
+  combined execution time. 
+
+  ${\Delta = c_u(\eta_u) + c_v(\eta_v) - c_u(\eta_u + \eta_v)}$
+\end{definition}
+
+
+\begin{theorem}[Relaxed Conditional Collapse]\label{thm:relaxed-collapse}
+  For a task ${\tau_i \in \tau}$, associated DAG ${G_i \in \mathbb{G}}$,
+  where ${G_i = (V, E)}$, candidate nodes ${u,v \in V}$,
+  collapsing ${u}$ and ${v}$ into ${\hat{u}}$ is beneficial if:
+
+  \begin{equation}
+    \Delta > 0
+  \end{equation}
+
+  and
+  
+  \begin{equation}
+    \indent
+    \frac{c_v(\eta_v)}{c_v(\eta_v) - \Delta} \ge
+    \frac{C_i - L_i}{D_i - L_i}
+  \end{equation}
+
+  \begin{proof}
+    The four cases that satisfy Equation~\ref{eq:collapse-condition}
+    are enumerated below.
+
+    \setcounter{case}{0}
+    \begin{case}
+      [${(u, v \not \in \lambda_i) \land (\hat{u} \not \in \hat{\lambda_i})}$]
+      Only ${C_i}$ is affected when no node ${(u,v,\hat{u})}$ lie on
+      the critical path. Thus:
+      \begin{align}
+        \indent
+        \hat{C}_i = C_i - \Delta
+      \end{align}
+
+      Since ${\Delta}$ must be greater than zero, then ${\hat{C}_i}$ is
+      less than ${C_i}$ and \ref{eq:collapse-condition} is satisfied.
+    \end{case}
+
+    \begin{case}
+      [${(u \in \lambda_i \land v \not \in \lambda_i)
+          \land (\hat{u} \in \hat{\lambda_i})}$]
+      Collapsing ${v}$ into the critical path which ${\hat{u}}$ lies
+      on, increases the critical path length ${L_i}$. Quantified, the
+      increase in ${L_i}$ is the removal of ${c_u(\eta_u)}$ and the
+      addition of ${c_u(\eta_u + \eta_v)}$ which is equivalent to:
+      \begin{align}
+        \indent
+        \hat{L}_i = L_i + c_v(\eta_v) - \Delta
+      \end{align}
+
+      Assuming Equation~\ref{eq:collapse-condition} is true, the
+      condition is derived by:
+      \begin{align*}
+        \frac{\hat{C_i} - \hat{L_i}} 
+             {D_i - \hat{L_i}} &\le
+        \frac{C_i - L_i}
+             {D_i - L_i} \\
+        \frac{(C_i - \Delta) - (L_i + c_v(\eta_v) - \Delta)}
+             {D_i - (L_i + c_v(\eta_v) - \Delta)} & \le
+        \frac{C_i - L_i}
+             {D_i - L_i} \\
+        (D_i - L_i)(C_i - L_i) - (D_i - L_i)c_v(\eta_v) & \le
+             (C_i - L_i)(D_i - L_i) - (C_i - L_i)(c_v(\eta_v) - \Delta) \\
+        \frac{c_v(\eta_v)}{c_v(\eta_v) - \Delta} & \ge
+        \frac{C_i - L_i}{D_i - L_i}
+      \end{align*}
+    \end{case}
+
+    \begin{case}[${(u,v \in \lambda_i) \land (\hat{u} \in \hat{\lambda_i})}$]
+      When both nodes lie on the critical path, the critical path
+      length after collapse is:
+      \begin{align*}
+        \indent
+        \hat{L}_i = L_i - \Delta
+      \end{align*}
+
+      Substituting the new critical path length and workload into
+      Equation~\ref{eq:collapse-condition}:
+
+      \begin{align*}
+        \indent
+        \frac{\hat{C_i} - \hat{L_i}} 
+             {D_i - \hat{L_i}} &\le
+        \frac{C_i - L_i} 
+             {D_i - L_i} \\
+        \frac{C_i - \Delta - (L_i - \Delta)}
+             {D_i - (L_i - \Delta)}
+             &\le
+        \frac{C_i - L_i} 
+             {D_i - L_i} \\
+        \frac{C_i - L_i}
+             {D_i - L_i + \Delta}
+             &\le
+        \frac{C_i - L_i} 
+             {D_i - L_i}
+      \end{align*}
+
+      Since ${\Delta}$ is greater than zero, the inequality holds.
+    \end{case}
+
+    \begin{case}[${(u,v \not \in \lambda_i) \land (\hat{u} \in \hat{\lambda_i})}$]
+      When a new critical path is created, the length of the new
+      critical path is bounded by
+
+      \begin{align*}
+        \indent
+        \hat{L}_i - L_i &\le \Delta - c_u(\eta_u) \\
+        \hat{L}_i - L_i &\le c_v(\eta_v) - \Delta \\
+        \hat{L}_i &\le L_i + c_v(\eta_v) - \Delta \\
+      \end{align*}
+
+      Substituting the inequality of
+      ${\hat{L}_i \le L_i + c_v(\eta_v) - \Delta}$ derived here in
+      Case 4, into Case 2 reaches the same conclusion. If
+      Equation~\ref{eq:condition} is satisfied then
+      Equation~\ref{eq:collapse-condition} is true.
+    \end{case}
+
+    Given ${\Delta}$ is positive, and
+    Equation~\ref{eq:collapse-condition} is true, each of the four
+    cases demonstrate a benefit for collapsing ${u}$ and ${v}$.
+  \end{proof}
+\end{theorem}
