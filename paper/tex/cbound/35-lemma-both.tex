@@ -1,0 +1,47 @@
+Lemma~\ref{lemma:beneficial-both} provides a condition for beneficial
+collapse when both nodes lie on the pre and post-collapse critical
+path. With both nodes laying on the critical path, the critical path
+length will be reduced if ${\Delta \ge 0}$.
+
+\begin{lemma}[Beneficial Both]\label{lemma:beneficial-both}
+  When ${(u,v) \in \lambda_i}$, and ${\hat{u} \in \hat{\lambda_i}}$
+  collapsing ${u}$ and ${v}$ into ${\hat{u}}$ is beneficial if and
+  only if ${\Delta \ge 0}$:
+
+  \begin{proof}
+    A direct algebraic manipulation from Equation~\ref{eq:benefit} is
+    the method used in this proof. Both ${u}$ and ${v}$ lie on the
+    critical path pre-collapse and post-collapse. The critical path
+    length post collapse can be written as:
+
+    \begin{align*}
+      \hat{L}_i &= L_i - c_u(\eta_u) - c_v(\eta_v) + c_u(\eta_u +  \eta_v) \\
+      \hat{L}_i &= L_i - \Delta
+    \end{align*}
+
+    Replacing ${\hat{L}_i}$ and ${\hat{C}_i}$ from
+    Lemma~\ref{lemma:beneficial-delta} in Equation~\ref{eq:benefit}.
+
+    \begin{align*}
+      \indent
+      \frac{\hat{C_i} - \hat{L_i}} 
+           {D_i - \hat{L_i}}
+           &\le
+      \frac{C_i - L_i} 
+           {D_i - L_i} \\
+      \frac{C_i - \Delta - (L_i - \Delta)}
+           {D_i - (L_i - \Delta)}
+           &\le
+      \frac{C_i - L_i} 
+           {D_i - L_i} \\
+      \frac{C_i - L_i}
+           {D_i - L_i + \Delta}
+           &\le
+      \frac{C_i - L_i} 
+           {D_i - L_i}
+      \end{align*}
+
+    Since ${\Delta}$ is greater than or equal to zero, the inequality
+    holds.     
+  \end{proof}
+\end{lemma}

@@ -1,0 +1,29 @@
+Combining the four lemmas provides a set of conditions in
+Theorem~\ref{thm:election-condition} that elect nodes for collapse.
+
+\begin{theorem}[Election]\label{thm:election-condition}
+  Collapsing candidate nodes ${(u,v)}$ is beneficial if and only if
+
+  \begin{multicols}{2}
+    \begin{equation*}
+      \Delta \ge 0
+    \end{equation*}
+    \begin{equation*}
+      \frac{c_v(\eta_v)}{c_v(\eta_v) - \Delta} \ge
+      \frac{C_i - L_i}{D_i - L_i}
+    \end{equation*}
+  \end{multicols}
+
+  \begin{proof}
+    A direct application of Lemmas~\ref{lemma:beneficial-delta},
+    \ref{lemma:beneficial-onto}, \ref{lemma:beneficial-both},
+    and \ref{lemma:new-critical-path}. Candidacy restricts the
+    impact upon the workload and critical path length of collapse to
+    the cases described by the four lemmas. Since ${u}$ and ${v}$ are
+    arbitrary candidates all conditions required by the lemmas are
+    required to guarantee collapse is beneficial. Those conditions are
+    ${\Delta \ge 0}$ and ${\frac{c_v(\eta_v)}{c_v(\eta_v) - \Delta} \ge
+      \frac{C_i - L_i}{D_i - L_i}}$. If those conditions are met, then
+    collapse is beneficial.
+  \end{proof}
+\end{theorem}

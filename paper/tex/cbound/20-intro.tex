@@ -1,0 +1,117 @@
+\section{Electing Nodes for Collapse}
+\label{sec:collapse-bound}
+
+For a task ${\tau_i \in \tau}$, associated DAG
+${G_i \in \mathbb{G}}$, where ${G_i = (V, E)}$, with nodes
+${u,v \in V}$ that qualify as candidates for collapse, collapsing
+${u}$ and ${v}$ may (or may not) result in an increase in
+performance. This section provides a method of determining if the
+collapse of ${u}$ and ${v}$ will \emph{benefit} the performance of the 
+task set ${\tau}$ in terms of ${m_i}$: the number of cores
+dedicated to ${\tau_i}$.
+
+The number of cores dedicated to task ${\tau_i}$ is determined by
+Equation~\ref{eq:m} which is replicated below. Equation~\ref{eq:m}
+depends on the critical path length ${L_i}$ and workload
+${C_i}$, both of which can be affected by collapsing nodes.
+
+\begin{multicols}{2}
+  \begin{equation*}
+    m_i = \left\lceil
+      \frac{C_i - L_i}
+           {D_i - L_i}
+    \right\rceil
+  \end{equation*}
+  \begin{equation*}
+    C_i = \sum_{v \in V} c_v(\eta_v)
+  \end{equation*}
+\end{multicols}
+
+For a task ${\tau_i}$ with ${m_i}$ dedicated cores, collapsing
+${u}$ and ${v}$ benefits ${\tau_i}$ (and therefor ${\tau}$) if the
+number of cores dedicated to ${\tau_i}$ is potentially reduced. A
+``hat'' is used to indicate pre and post-collapse values,
+e.g. ${\hat{C}_i}$ is the workload post-collapse and ${C_i}$
+pre-collapse. If ${m_i}$ is the number of cores dedicated to
+${\tau_i}$ by Equation~\ref{eq:m} before collapsing ${u}$ and ${v}$
+beneficial collapse is defined as follows:  
+
+\begin{definition}[Beneficial Collapse]
+  Collapsing ${u}$ and ${v}$ is \emph{beneficial} if and only if
+  ${\hat{m_i} \le m_i}$. 
+
+  Which can be expanded to:
+  \begin{equation}\label{eq:benefit}
+      \frac{\hat{C_i} - \hat{L_i}}
+           {D_i - \hat{L_i}} \le
+      \frac{C_i - L_i}
+           {D_i - L_i}
+  \end{equation}
+\end{definition}
+
+
+Section~\ref{sec:candidacy} defines the candidates for
+collapse based upon the structure of the DAG. The goal of this section
+is to provide a condition that determines if candidate nodes ${u}$ and
+${v}$ will benefit the task ${\tau_i}$. If ${u}$ and ${v}$ satisfy the
+condition collapsing them  is beneficial and the nodes are
+\emph{elected} for collapse.
+
+The final Theorem~\ref{thm:election-condition}, relies on smaller
+lemmas to provide a single condition for election. Each of the lemmas,
+definitions, and theorems share the following context. A single task
+${\tau_i \in \tau}$ with associated DAG ${G_i \in \mathbb{G}}$, where
+${G_i = (V, E)}$, and nodes ${u,v \in V}$ are candidates for collapse
+according to Section~\ref{sec:candidacy}. Additionally, the collapsed
+node of ${u}$ and ${v}$ will be referred to as ${\hat{u}}$ which may
+be stated as ``collapsing ${u}$ and ${v}$ \emph{into}
+${\hat{u}}$''. For simplicity of discussion, if one of ${u}$ and ${v}$
+must lie on the critical path and the other must not, the node on the
+critical path is named ${u}$.
+
+The WCET of the collapsed node ${\hat{u}}$ is given by
+${c_{\hat{u}}(\eta_{\hat{u}})}$ which is equal to
+${c_{\hat{u}}(\eta_{\hat{u}}) = c_u(\eta_u + \eta_v)}$. Quantification
+of the difference in WCET of the separate and combined WCET times is
+called the workload delta and represented as ${\Delta}$.
+
+\begin{definition}[Workload Delta]
+  ${\Delta}$ is the difference in the separate WCET bounds of
+  ${u}$ and ${v}$ compared to the combined execution time. 
+
+  ${\Delta = c_u(\eta_u) + c_v(\eta_v) - c_u(\eta_u + \eta_v)}$
+\end{definition}
+
+Each of the following lemmas are related to collapsing ${u}$ and ${v}$
+for each of the potential changes to the critical path. Individual
+lemmas will provide conditions for the collapse to be beneficial given
+the impact on the critical path. Candidacy limits the impact on the
+critical path length to one of the following:
+
+\begin{enumerate}
+  \item{${u}$ and ${v}$ did not lie on the pre-collapse critical path and
+    ${\hat{u}}$ does not lie on the post-collapse critical path:
+    ${(u,v) \not \in \lambda_i}$ and ${\hat{u} \not \in \hat{\lambda}_i}$.}
+  \item{${u}$ lies on the pre-collapse critical path, ${v}$ does
+    not, and ${\hat{u}}$ lies on the post-collapse critical path:
+    ${u \in \lambda \land v \not \in \lambda_i}$
+    and ${\hat{u} \in \hat{\lambda}_i}$.}
+    
+  %% \item{${u}$ lies on the pre-collapse critical path, ${v}$ does not,
+  %%   and ${\hat{u}}$ does not lie on the post-collapse critical path:
+  %%   ${u \in \lambda_i \land v \not \in \lambda_i}$
+  %%   and ${\hat{u} \not \in \hat{\lambda}_i}$.}
+    
+  \item{${u}$ and ${v}$ lie on the pre-collapse critical path,
+    and ${\hat{u}}$ lies on the post-collapse critical path:
+    ${(u, v) \in \lambda_i}$ and ${\hat{u} \in \hat{\lambda}_i}$.}
+  \item{${u}$ and ${v}$ lie on the pre-collapse critical path, and
+    ${\hat{u}}$ does not lie on the post-collapse critical path:
+    ${(u,v) \in \lambda_i}$ and ${\hat{u} \not \in \hat{\lambda}_i}$.}
+\end{enumerate}
+
+\input{\tex{25-lemma-delta.tex}}
+\input{\tex{30-lemma-half.tex}}
+\input{\tex{35-lemma-both.tex}}
+\input{\tex{40-lemma-new-path.tex}}
+\input{\tex{45-theorem-collapse.tex}}

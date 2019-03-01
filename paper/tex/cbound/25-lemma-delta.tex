@@ -1,0 +1,33 @@
+Lemma~\ref{lemma:beneficial-delta} addresses the simplest case of
+collapse, where ${u}$ and ${v}$ do not lie on the pre-collapse
+critical path and ${\hat{u}}$ does not lie on the post-collapse
+critical path. Since the path is not affected the critical path
+length remains the same.
+
+\begin{lemma}[Beneficial Delta]\label{lemma:beneficial-delta}
+  When ${(u, v) \not \in \lambda_i}$, ${\hat{u} \not \in \hat{\lambda}_i}$
+  collapsing ${u}$ and ${v}$ into ${\hat{u}}$ is beneficial if and
+  only if ${\Delta \ge 0}$.
+
+  \begin{proof}
+    Since the critical path is not affected, neither is the critical
+    path length: ${\hat{L}_i = L_i}$. The workload post-collapse
+    ${\hat{C}_i}$ is the pre-collapse workload minus the workload
+    delta of collapse:
+    \begin{equation*}
+      \indent
+      \hat{C}_i = C_i - \Delta
+    \end{equation*}
+    Replacing ${\hat{C}_i}$ and ${\hat{L}_i}$ in Equation~\ref{eq:benefit}:
+    \begin{equation*}
+    \frac{(\hat{C_i} - \Delta) - L_i}
+           {D_i - L_i} \le
+      \frac{C_i - L_i}
+           {D_i - L_i}
+    \end{equation*}
+    If ${\Delta}$ is positive, the inequality will hold and collapse
+    is beneficial. Similarly, if collapse is beneficial and
+    ${\hat{L}_i = L}$, ${\Delta}$ must be positive.
+  \end{proof}
+\end{lemma}
+

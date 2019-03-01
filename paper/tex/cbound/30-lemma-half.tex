@@ -1,0 +1,49 @@
+Lemma~\ref{lemma:beneficial-onto} provides a condition for beneficial
+collapse when ${u}$ lies on the pre-collapse critical path, ${v}$ does
+not, and ${\hat{u}}$ lies on the post-collapse critical path. In this
+case, the workload is reduced by ${\Delta}$ and the critical path
+length is reduced by the separate execution time of ${c_u}$ but
+increased by the collapsed execution time.
+
+\begin{lemma}[Beneficial Onto]\label{lemma:beneficial-onto}
+  When ${\Delta \ge 0}$, ${u \in \lambda_i}$, ${v \not \in
+    \lambda_i}$, ${\hat{u} \in \hat{\lambda}_i}$, collapsing ${u}$ and
+  ${v}$ into ${\hat{u}}$ is beneficial if and only if:
+
+  \begin{equation}
+    \indent
+    \frac{c_v(\eta_v)}{c_v(\eta_v) - \Delta} \ge
+    \frac{C_i - L_i}{D_i - L_i}
+  \end{equation}
+
+  \begin{proof}
+    A direct algebraic manipulation from Equation~\ref{eq:benefit} is
+    the method used in this proof. Since ${u}$ lies on the
+    pre-collapse critical path and ${v}$ does not, the post-collapse
+    critical path length will include ${\eta_v}$ more threads assigned
+    to ${\hat{u}}$. This difference can be rewritten using ${\Delta}$.
+    \begin{align*}
+      \indent
+      \hat{L}_i &= L_i - c_u(\eta_u) + c_u(\eta_u + \eta_v) \\
+      &= L_i + c_v(\eta_v) - \Delta
+    \end{align*}
+
+    Replacing ${\hat{L}_i}$ and ${\hat{C}_i}$ from
+    Lemma~\ref{lemma:beneficial-delta} in Equation~\ref{eq:benefit}:
+    \begin{align*}
+        \frac{\hat{C_i} - \hat{L_i}} 
+             {D_i - \hat{L_i}} &\le
+        \frac{C_i - L_i}
+             {D_i - L_i} \\
+        \frac{(C_i - \Delta) - (L_i + c_v(\eta_v) - \Delta)}
+             {D_i - (L_i + c_v(\eta_v) - \Delta)} & \le
+        \frac{C_i - L_i}
+             {D_i - L_i} \\
+        (D_i - L_i)(C_i - L_i) - (D_i - L_i)c_v(\eta_v) & \le
+             (C_i - L_i)(D_i - L_i) - (C_i - L_i)(c_v(\eta_v) - \Delta) \\
+        \frac{c_v(\eta_v)}{c_v(\eta_v) - \Delta} & \ge
+        \frac{C_i - L_i}{D_i - L_i}
+    \end{align*}
+    
+  \end{proof}
+\end{lemma}

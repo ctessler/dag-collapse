@@ -1,0 +1,68 @@
+Lemma~\ref{lemma:new-critical-path} provides a condition for beneficial
+collapse when both nodes lie on the pre-collapse critical
+path which creates a new critical path. Since the critical path length
+is reduced by collapsing two nodes already lying upon it, it is
+possible that a different path becomes the critical one after collapse.
+
+\begin{lemma}[New Critical Path]\label{lemma:new-critical-path}
+  When ${\Delta \ge 0}$, ${(u,v) \in \lambda_i}$, ${\hat{u} \not \in
+    \hat{\lambda}_i}$, collapsing 
+  ${u}$ and ${v}$ into ${\hat{u}}$ is beneficial if and only if:
+
+  \begin{equation}
+    \indent
+    \frac{c_v(\eta_v)}{c_v(\eta_v) - \Delta} \ge
+    \frac{C_i - L_i}{D_i - L_i}
+  \end{equation}
+
+  \begin{proof}
+    After establishing a safe bound on the change in workload and
+    critical path length the arithmetic manipulation used in
+    Lemma~\ref{lemma:beneficial-both} is applied.
+
+    Consider the pre-collapse DAG ${G_i}$, the critical path
+    ${\lambda_i}$ has the greatest WCET sum among all paths through
+    ${G_i}$. Name the pre-collapse path through ${G_i}$ with the
+    second greatest WCET sum ${\lambda_i^\circ}$. Let ${L_i^\circ}$ denote the
+    WCET sum of ${\lambda_i^\circ}$.
+
+    For ${(u,v) \in \lambda_i}$ and ${\hat{u} \not \in
+      \hat{\lambda}_i}$, then ${\lambda_i^\circ}$ must be the critical
+    path post-collapse. Additionally, the reduction in the path length
+    of ${\lambda_i}$ must be greater than the difference between
+    ${L_i}$ and ${L_i^\circ}$:
+    \begin{equation*}
+      \indent
+      L_i - \Delta < L_i^\circ \le L_i
+    \end{equation*}
+
+    Denote the difference in path lengths of ${\lambda_i}$ and
+    ${\lambda_i^\circ}$ as ${\Delta^\circ = L_i - L_i^\circ}$. The
+    post-collapse cores assigned to ${\tau_i}$ are:
+
+    \begin{align*}
+      \indent
+      \frac{\hat{C_i} - \hat{L_i}} 
+           {D_i - \hat{L_i}}
+           &=
+      \frac{C - \Delta - (L_i - \Delta^\circ)}
+           {D_i - (L_i - \Delta^\circ)} \\
+           &\le
+      \frac{C - \Delta^\circ - (L_i - \Delta^\circ)}
+           {D_i - (L_i - \Delta^\circ)}
+    \end{align*}
+
+    Reducing the workload by ${\Delta^\circ}$ in place of
+    ${\Delta^\circ}$ increases the numerator because
+    ${\Delta > \Delta^\circ}$. Reapplying the arithmetic manipulation
+    of Lemma~\ref{lemma:beneficial-both}:
+
+    \begin{align*}
+      \frac{C - \Delta^\circ - (L_i - \Delta^\circ)}
+           {D_i - (L_i - \Delta^\circ)}
+           &\le
+      \frac{C - L_i}
+           {D_i - L_i}
+    \end{align*}
+  \end{proof}
+\end{lemma}
